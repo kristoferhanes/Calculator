@@ -27,20 +27,16 @@ class CalculatorBrain {
   }
 
   private var opStack = [Op]()
-
   private let knownOps: [String:Op]
 
   init() {
     var initOps = [String:Op]()
-    func learnOp(op: Op) {
-      initOps[op.description] = op
-    }
-    learnOp(Op.BinaryOperation("×") { x, y in x * y })
-    learnOp(Op.BinaryOperation("÷") { x, y in y / x })
-    learnOp(Op.BinaryOperation("+") { x, y in x + y })
-    learnOp(Op.BinaryOperation("−") { x, y in y - x })
-    learnOp(Op.UnaryOperation("√", sqrt))
-    
+    func initOp(op: Op) { initOps[op.description] = op }
+    initOp(Op.BinaryOperation("×") { x, y in x * y })
+    initOp(Op.BinaryOperation("÷") { x, y in y / x })
+    initOp(Op.BinaryOperation("+") { x, y in x + y })
+    initOp(Op.BinaryOperation("−") { x, y in y - x })
+    initOp(Op.UnaryOperation("√", sqrt))
     knownOps = initOps
   }
 

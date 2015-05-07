@@ -11,9 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
   @IBOutlet weak var display: UILabel!
-
   private var userIsTyping = false
-
   private var brain = CalculatorBrain()
 
   @IBAction func appendDigit(sender: UIButton) {
