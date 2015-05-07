@@ -12,64 +12,45 @@ class ViewController: UIViewController {
 
   @IBOutlet weak var display: UILabel!
 
-  var userIsInTheMiddleOfTypingANumber = false
+  private var userIsTyping = false
+
+  private var brain = CalculatorBrain()
 
   @IBAction func appendDigit(sender: UIButton) {
     let digit = sender.currentTitle!
-    if userIsInTheMiddleOfTypingANumber {
+    if userIsTyping {
       display.text = display.text! + digit
     } else {
       display.text = digit
-      userIsInTheMiddleOfTypingANumber = true
+      userIsTyping = true
     }
     println("digit = \(digit)")
   }
 
   @IBAction func operate(sender: UIButton) {
-    let operation = sender.currentTitle!
-    if userIsInTheMiddleOfTypingANumber {
+    if userIsTyping {
       enter()
     }
-    switch operation {
-    case "×": performOperation { $1 * $0 }
-    case "÷": performOperation { $1 / $0 }
-    case "+": performOperation { $1 + $0 }
-    case "−": performOperation { $1 - $0 }
-    case "√": performOperation1 { sqrt($0) }
-    default: break
-    }
+    displayValue = flatMap(sender.currentTitle) { x in brain.performOperation(x) }
   }
 
-  func performOperation(operation: (Double,Double)->Double) {
-    if operandStack.count >= 2 {
-      displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
-      enter()
-    }
+  @IBAction func enter() {
+    userIsTyping = false
+    displayValue = flatMap(displayValue) { x in brain.pushOperand(x) }
   }
 
-  func performOperation1(operation: Double->Double) {
-    if operandStack.count >= 1 {
-      displayValue = operation(operandStack.removeLast())
-      enter()
-    }
-  }
-
-  var operandStack = Array<Double>()
-
-   @IBAction func enter() {
-    userIsInTheMiddleOfTypingANumber = false
-    operandStack.append(displayValue)
-    println("operandStack = \(operandStack)")
-  }
-
-  var displayValue: Double {
+  private var displayValue: Double? {
     get {
       return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
     }
     set {
-      display.text = "\(newValue)"
+      if let nv = newValue {
+        display.text = "\(nv)"
+      } else {
+        display.text = "Error"
+      }
     }
   }
-
+  
 }
 
