@@ -15,9 +15,9 @@ class ViewController: UIViewController {
   private var brain = CalculatorBrain()
 
   @IBAction func appendDigit(sender: UIButton) {
-    let digit = sender.currentTitle!
+    let digit = sender.currentTitle ?? ""
     if userIsTyping {
-      display.text = display.text! + digit
+      display.text = flatMap(display.text) { x in x + digit }
     } else {
       display.text = digit
       userIsTyping = true
@@ -26,9 +26,7 @@ class ViewController: UIViewController {
   }
 
   @IBAction func operate(sender: UIButton) {
-    if userIsTyping {
-      enter()
-    }
+    if userIsTyping { enter() }
     displayValue = flatMap(sender.currentTitle) { x in brain.performOperation(x) }
   }
 
@@ -39,7 +37,7 @@ class ViewController: UIViewController {
 
   private var displayValue: Double? {
     get {
-      return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+      return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue }
     }
     set {
       if let nv = newValue {
