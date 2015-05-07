@@ -72,11 +72,10 @@ class CalculatorBrain {
   }
 
   func evaluate() -> Double? {
-    if let (result, remainder) = evaluate(opStack) {
-      println("\(opStack) = \(result) with \(remainder) left over.")
-      return result
+    return flatMap(evaluate(opStack)) { x in
+      println("\(opStack) = \(x.result) with \(x.remainingOps) left over.")
+      return x.result
     }
-    return nil
   }
 
   func pushOperand(operand: Double) {
