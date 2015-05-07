@@ -22,7 +22,6 @@ class ViewController: UIViewController {
       display.text = digit
       userIsTyping = true
     }
-    println("digit = \(digit)")
   }
 
   @IBAction func operate(sender: UIButton) {
@@ -36,9 +35,7 @@ class ViewController: UIViewController {
   }
 
   private var displayValue: Double? {
-    get {
-      return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue }
-    }
+    get { return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue } }
     set {
       if let nv = newValue {
         display.text = "\(nv)"
