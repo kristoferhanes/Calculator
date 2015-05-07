@@ -12,12 +12,15 @@ class CalculatorBrain {
 
   private enum Op: Printable {
     case Operand(Double)
+    case Constant(String, Double)
     case UnaryOperation(String, Double->Double)
     case BinaryOperation(String, (Double,Double)->Double)
     var description: String {
       switch self {
       case let .Operand(operand):
         return "\(operand)"
+      case let .Constant(symbol, value):
+        return symbol
       case let .UnaryOperation(symbol, _):
         return symbol
       case let .BinaryOperation(symbol, _):
@@ -37,6 +40,9 @@ class CalculatorBrain {
     initOp(Op.BinaryOperation("+") { x, y in x + y })
     initOp(Op.BinaryOperation("−") { x, y in y - x })
     initOp(Op.UnaryOperation("√", sqrt))
+    initOp(Op.UnaryOperation("sin", sin))
+    initOp(Op.UnaryOperation("cos", cos))
+    initOp(Op.Constant("π", M_PI))
     knownOps = initOps
   }
 
@@ -45,6 +51,8 @@ class CalculatorBrain {
     switch remainingOps.removeLast() {
     case let .Operand(operand):
       return (operand, remainingOps)
+    case let .Constant(_, value):
+      return (value, remainingOps)
     case let .UnaryOperation(_, operation):
       return unaryOp(operation, remainingOps)
     case let .BinaryOperation(_, operation):
@@ -71,16 +79,18 @@ class CalculatorBrain {
     return nil
   }
 
-  func pushOperand(operand: Double) -> Double? {
+  func pushOperand(operand: Double) {
     opStack.append(.Operand(operand))
-    return evaluate()
   }
 
-  func performOperation(symbol: String) -> Double? {
+  func performOperation(symbol: String) {
     if let operation = knownOps[symbol] {
       opStack.append(operation)
     }
-    return evaluate()
+  }
+
+  var history: String {
+    return opStack.isEmpty ? "" : "\(opStack)"
   }
 
 }

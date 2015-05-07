@@ -11,34 +11,55 @@ import UIKit
 class ViewController: UIViewController {
 
   @IBOutlet weak var display: UILabel!
+  @IBOutlet weak var historyDisplay: UILabel!
   private var userIsTyping = false
   private var brain = CalculatorBrain()
 
   @IBAction func appendDigit(sender: UIButton) {
     let digit = sender.currentTitle ?? ""
     if userIsTyping {
-      display.text = flatMap(display.text) { x in x + digit }
+      if digit != "." || !contains(display.text ?? "", ".") {
+        display.text = flatMap(display.text) { x in x + digit }
+      }
     } else {
       display.text = digit
       userIsTyping = true
     }
   }
 
+  @IBAction func clear() {
+    brain = CalculatorBrain()
+    bindModelToView()
+    displayValue = 0
+  }
+
   @IBAction func operate(sender: UIButton) {
     if userIsTyping { enter() }
-    displayValue = flatMap(sender.currentTitle) { x in brain.performOperation(x) }
+    if let op = sender.currentTitle {
+      brain.performOperation(op)
+    }
+    bindModelToView()
   }
 
   @IBAction func enter() {
     userIsTyping = false
-    displayValue = flatMap(displayValue) { x in brain.pushOperand(x) }
+    if let dv = displayValue {
+      brain.pushOperand(dv)
+    }
+    bindModelToView()
+  }
+
+  private func bindModelToView() {
+    displayValue = brain.evaluate()
+    historyDisplay.text = brain.history
   }
 
   private var displayValue: Double? {
-    get { return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue } }
+    get {
+      return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue } }
     set {
       if let nv = newValue {
-        display.text = "\(nv)"
+        display.text = nv == 0 ? "0" : "\(nv)"
       } else {
         display.text = "Error"
       }
