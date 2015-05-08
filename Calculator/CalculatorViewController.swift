@@ -59,7 +59,9 @@ class CalculatorViewController: UIViewController {
 
   private func bindModelToView() {
     displayValue = brain.evaluate()
-    historyDisplay.text = brain.history
+    let description = brain.description
+    let suffix = count(description) > 0 ? "=" : " "
+    historyDisplay.text = description + suffix
   }
 
   private var displayValue: Double? {

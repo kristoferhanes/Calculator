@@ -8,11 +8,12 @@
 
 import Foundation
 
-class CalculatorBrain {
+class CalculatorBrain: Printable {
 
   private enum Op: Printable {
     case Operand(Double)
     case Constant(String, Double)
+    case Variable(String)
     case UnaryOperation(String, Double->Double)
     case BinaryOperation(String, (Double,Double)->Double)
     var description: String {
@@ -20,6 +21,8 @@ class CalculatorBrain {
       case let .Operand(operand):
         return "\(operand)"
       case let .Constant(symbol, value):
+        return symbol
+      case let .Variable(symbol):
         return symbol
       case let .UnaryOperation(symbol, _):
         return symbol
@@ -31,6 +34,8 @@ class CalculatorBrain {
 
   private var opStack = [Op]()
   private let knownOps: [String:Op]
+
+  var variableValues = [String:Double]()
 
   init() {
     var initOps = [String:Op]()
@@ -66,6 +71,8 @@ class CalculatorBrain {
       return (operand, remainingOps)
     case let .Constant(_, value):
       return (value, remainingOps)
+    case let .Variable(symbol):
+      return flatMap(variableValues[symbol]) { x in (x, remainingOps) }
     case let .UnaryOperation(_, operation):
       return unaryOp(operation, remainingOps)
     case let .BinaryOperation(_, operation):
@@ -101,12 +108,60 @@ class CalculatorBrain {
     }
   }
 
+  func pushOperand(symbol: String) {
+    opStack.append(.Variable(symbol))
+  }
+
   func clear() {
     opStack = [Op]()
   }
 
-  var history: String {
-    return opStack.isEmpty ? "" : "\(opStack)"
+  func clearVariables() {
+    variableValues = [String:Double]()
+  }
+
+  var description: String {
+    var descriptionList = [String]()
+    var remainingOps = opStack
+    while true {
+      let descriptionResult = getDescription(remainingOps)
+      descriptionList.append(descriptionResult.symbol)
+      if descriptionResult.remainingOps.isEmpty { break }
+      remainingOps = descriptionResult.remainingOps
+    }
+    let result = ",".join(descriptionList.reverse())
+    return result
+  }
+
+  private func getDescription(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+    if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
+    switch remainingOps.removeLast() {
+    case let .Operand(operand):
+      return ("\(operand)", remainingOps)
+    case let .Constant(symbol, _):
+      return ("\(symbol)", remainingOps)
+    case let .Variable(symbol):
+      return (symbol, remainingOps)
+    case let .UnaryOperation(symbol, _):
+      return unaryOpDescription(symbol, remainingOps)
+    case let .BinaryOperation(symbol, _):
+      return binaryOpDescription(symbol, remainingOps)
+    }
+  }
+
+  private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+    let operand = getDescription(remainingOps)
+    let startParen = remainingOps.count-operand.remainingOps.count > 1 ? "" : "("
+    let endParen = remainingOps.count-operand.remainingOps.count > 1 ? "" : ")"
+    return (symbol + startParen + "\(operand.symbol)" + endParen, operand.remainingOps)
+  }
+  
+  private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+    let operand1 = getDescription(remainingOps)
+    let operand2 = getDescription(operand1.remainingOps)
+    let startParen = remainingOps.count == opStack.count-1 ? "" : "("
+    let endParen = remainingOps.count == opStack.count-1 ? "" : ")"
+    return (startParen + operand2.symbol + symbol + operand1.symbol + endParen, operand2.remainingOps)
   }
 
 }
