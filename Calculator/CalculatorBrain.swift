@@ -164,7 +164,7 @@ extension CalculatorBrain: Printable {
   }
 
   private func stripDecimalZero(s: String) -> String {
-    if count(s) < 3 { return s }
+    if count(s) < 2 { return s }
     var result = Array(s)
     let lastTwo = result.endIndex-2...result.endIndex-1
     let end = result[lastTwo]
