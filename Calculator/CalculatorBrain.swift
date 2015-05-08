@@ -36,7 +36,7 @@ class CalculatorBrain {
   private let knownOps: [String:Op]
 
   var variableValues = [String:Double]()
-
+  
   init() {
     var initOps = [String:Op]()
     func initOp(op: Op) { initOps[op.description] = op }
@@ -103,9 +103,8 @@ class CalculatorBrain {
   }
 
   func performOperation(symbol: String) {
-    if let operation = knownOps[symbol] {
-      opStack.append(operation)
-    }
+    let operation = knownOps[symbol] ?? Op.Variable(symbol)
+    opStack.append(operation)
   }
 
   func pushOperand(symbol: String) {

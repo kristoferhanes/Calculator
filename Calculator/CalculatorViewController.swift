@@ -41,6 +41,14 @@ class CalculatorViewController: UIViewController {
     displayValue = 0
   }
 
+  @IBAction func setVariable(sender: UIButton) {
+    if let variable = sender.currentTitle where variable == "→M" {
+      brain.variableValues["M"] = displayValue
+      userIsTyping = false
+    }
+    bindModelToView()
+  }
+
   @IBAction func operate(sender: UIButton) {
     if userIsTyping { enter() }
     if let op = sender.currentTitle {
