@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CalculatorBrain: Printable {
+class CalculatorBrain {
 
   private enum Op: Printable {
     case Operand(Double)
@@ -120,6 +120,11 @@ class CalculatorBrain: Printable {
     variableValues = [String:Double]()
   }
 
+}
+
+
+extension CalculatorBrain: Printable {
+
   var description: String {
     var remainingOps = opStack
     let results = GeneratorOf<String> {
@@ -149,11 +154,9 @@ class CalculatorBrain: Printable {
 
   private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     let operand = getDescription(remainingOps)
-    let startParen = remainingOps.count-operand.remainingOps.count > 1 ? "" : "("
-    let endParen = remainingOps.count-operand.remainingOps.count > 1 ? "" : ")"
-    return (symbol + startParen + "\(operand.symbol)" + endParen, operand.remainingOps)
+    return (symbol + "(" + removeParen("\(operand.symbol)") + ")", operand.remainingOps)
   }
-  
+
   private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     let operand1 = getDescription(remainingOps)
     let operand2 = getDescription(operand1.remainingOps)
