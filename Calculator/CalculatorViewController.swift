@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController {
 
   @IBOutlet weak var display: UILabel!
   @IBOutlet weak var historyDisplay: UILabel!
@@ -56,7 +56,7 @@ class ViewController: UIViewController {
 
   private var displayValue: Double? {
     get {
-      return flatMap(display.text) { x in NSNumberFormatter().numberFromString(x)?.doubleValue } }
+      return flatMap(display.text) { x in doubleFromString(x) } }
     set {
       if let nv = newValue {
         display.text = nv == 0 ? "0" : "\(nv)"

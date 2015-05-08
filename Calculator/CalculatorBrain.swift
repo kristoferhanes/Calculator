@@ -106,11 +106,3 @@ class CalculatorBrain {
   }
 
 }
-
-private func flatMap<T,U>(x: T?, y: T?, f: (T,T)->U?) -> U? {
-  return flatMap(x) { x in flatMap(y) { y in f(x, y) } }
-}
-
-private func doubleFromString(s: String) -> Double? {
-  return NSNumberFormatter().numberFromString(s)?.doubleValue
-}
