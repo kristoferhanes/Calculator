@@ -61,7 +61,7 @@ class ViewController: UIViewController {
       if let nv = newValue {
         display.text = nv == 0 ? "0" : "\(nv)"
       } else {
-        display.text = "Error"
+        display.text = "err"
       }
     }
   }
