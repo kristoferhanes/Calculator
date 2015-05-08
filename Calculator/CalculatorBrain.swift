@@ -46,6 +46,19 @@ class CalculatorBrain {
     knownOps = initOps
   }
 
+  typealias PropertyList = AnyObject
+
+  var program: PropertyList {
+    get {
+      return opStack.map { x in x.description }
+    }
+    set {
+      let opSymbols = newValue as? [String]
+      let newOpStack = opSymbols?.map { x in self.knownOps[x] ?? flatMap(doubleFromString(x)) { x in Op.Operand(x) } }
+      opStack = (newOpStack?.filter { x in x != nil })?.map { x in x! } ?? opStack
+    }
+  }
+
   private func evaluate(var remainingOps: [Op]) -> (result: Double, remainingOps: [Op])? {
     if remainingOps.isEmpty { return nil }
     switch remainingOps.removeLast() {
@@ -96,4 +109,8 @@ class CalculatorBrain {
 
 private func flatMap<T,U>(x: T?, y: T?, f: (T,T)->U?) -> U? {
   return flatMap(x) { x in flatMap(y) { y in f(x, y) } }
+}
+
+private func doubleFromString(s: String) -> Double? {
+  return NSNumberFormatter().numberFromString(s)?.doubleValue
 }
