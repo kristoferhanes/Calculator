@@ -121,23 +121,21 @@ class CalculatorBrain: Printable {
   }
 
   var description: String {
-    var descriptionList = [String]()
     var remainingOps = opStack
-    while true {
-      let descriptionResult = getDescription(remainingOps)
-      descriptionList.append(descriptionResult.symbol)
-      if descriptionResult.remainingOps.isEmpty { break }
-      remainingOps = descriptionResult.remainingOps
+    let results = GeneratorOf<String> {
+      if remainingOps.isEmpty { return nil }
+      let (result, remaining) = self.getDescription(remainingOps)
+      remainingOps = remaining
+      return self.removeParen(result)
     }
-    let result = ",".join(descriptionList.reverse())
-    return result
+    return ", ".join(reduce(results, [], { accum, x in [x] + accum }))
   }
 
   private func getDescription(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
     switch remainingOps.removeLast() {
     case let .Operand(operand):
-      return ("\(operand)", remainingOps)
+      return (stripDecimalZero("\(operand)"), remainingOps)
     case let .Constant(symbol, _):
       return ("\(symbol)", remainingOps)
     case let .Variable(symbol):
@@ -159,9 +157,28 @@ class CalculatorBrain: Printable {
   private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     let operand1 = getDescription(remainingOps)
     let operand2 = getDescription(operand1.remainingOps)
-    let startParen = remainingOps.count == opStack.count-1 ? "" : "("
-    let endParen = remainingOps.count == opStack.count-1 ? "" : ")"
-    return (startParen + operand2.symbol + symbol + operand1.symbol + endParen, operand2.remainingOps)
+    return ("(" + operand2.symbol + symbol + operand1.symbol + ")", operand2.remainingOps)
+  }
+
+  private func stripDecimalZero(s: String) -> String {
+    if count(s) < 3 { return s }
+    var result = Array(s)
+    let lastTwo = result.endIndex-2...result.endIndex-1
+    let end = result[lastTwo]
+    if end.first! == "." && end.last! == "0" {
+      result.removeRange(lastTwo)
+    }
+    return String(result)
+  }
+
+  private func removeParen(s: String) -> String {
+    if count(s) < 2 { return s }
+    var result = Array(s)
+    if result.first! == "(" && result.last! == ")" {
+      result.removeAtIndex(result.startIndex)
+      result.removeAtIndex(result.endIndex-1)
+    }
+    return String(result)
   }
 
 }
