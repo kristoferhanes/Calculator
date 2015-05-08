@@ -18,17 +18,25 @@ class CalculatorViewController: UIViewController {
   @IBAction func appendDigit(sender: UIButton) {
     let digit = sender.currentTitle ?? ""
     if userIsTyping {
-      if digit != "." || !contains(display.text ?? "", ".") {
-        display.text = flatMap(display.text) { x in x + digit }
-      }
+      appendToDisplay(digit)
     } else {
-      display.text = digit
+      setDisplayTo(digit)
       userIsTyping = true
     }
   }
 
+  private func appendToDisplay(s: String) {
+    if s != "." || !contains(display.text ?? "", ".") {
+      display.text = flatMap(display.text) { x in x + s }
+    }
+  }
+
+  private func setDisplayTo(s: String) {
+    display.text = s
+  }
+
   @IBAction func clear() {
-    brain = CalculatorBrain()
+    brain.clear()
     bindModelToView()
     displayValue = 0
   }
@@ -61,10 +69,10 @@ class CalculatorViewController: UIViewController {
       if let nv = newValue {
         display.text = nv == 0 ? "0" : "\(nv)"
       } else {
-        display.text = "err"
+        display.text = " "
       }
     }
   }
-  
+
 }
 

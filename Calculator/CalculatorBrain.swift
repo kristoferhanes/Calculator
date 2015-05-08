@@ -101,6 +101,10 @@ class CalculatorBrain {
     }
   }
 
+  func clear() {
+    opStack = [Op]()
+  }
+
   var history: String {
     return opStack.isEmpty ? "" : "\(opStack)"
   }
