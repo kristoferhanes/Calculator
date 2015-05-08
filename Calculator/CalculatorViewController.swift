@@ -37,6 +37,7 @@ class CalculatorViewController: UIViewController {
 
   @IBAction func clear() {
     brain.clear()
+    brain.clearVariables()
     bindModelToView()
     displayValue = 0
   }
