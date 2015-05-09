@@ -27,11 +27,11 @@ class CalculatorViewController: UIViewController {
 
   private func appendToDisplay(s: String) {
     if s != "." || !contains(display.text ?? "", ".") {
-      display.text = flatMap(display.text) { x in x + s }
+      setDisplayTo(flatMap(display.text) { x in x + s })
     }
   }
 
-  private func setDisplayTo(s: String) {
+  private func setDisplayTo(s: String?) {
     display.text = s
   }
 
@@ -43,7 +43,7 @@ class CalculatorViewController: UIViewController {
   }
 
   @IBAction func setVariable(sender: UIButton) {
-    if let variable = sender.currentTitle where variable == "→M" {
+    if sender.currentTitle == "→M" {
       brain.variableValues["M"] = displayValue
       userIsTyping = false
     }
