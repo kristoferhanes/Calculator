@@ -146,14 +146,14 @@ extension CalculatorBrain: Printable {
     var remainingOps = opStack
     let expressions = GeneratorOf<String> {
       if remainingOps.isEmpty { return nil }
-      let (expression, remaining) = self.getNextExpressionFrom(remainingOps)
+      let (expression, remaining) = self.getPreviousExpressionFrom(remainingOps)
       remainingOps = remaining
       return removeOutsideParenFrom(expression)
     }
-    return ", ".join(reduce(expressions, []) { accum, x in [x] + accum })
+    return ", ".join(Array(expressions).reverse())
   }
 
-  private func getNextExpressionFrom(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+  private func getPreviousExpressionFrom(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
     switch remainingOps.removeLast() {
     case let .Operand(operand):
@@ -170,13 +170,13 @@ extension CalculatorBrain: Printable {
   }
 
   private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand = getNextExpressionFrom(remainingOps)
+    let operand = getPreviousExpressionFrom(remainingOps)
     return (symbol + "(" + removeOutsideParenFrom(operand.symbol) + ")", operand.remainingOps)
   }
 
   private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand1 = getNextExpressionFrom(remainingOps)
-    let operand2 = getNextExpressionFrom(operand1.remainingOps)
+    let operand1 = getPreviousExpressionFrom(remainingOps)
+    let operand2 = getPreviousExpressionFrom(operand1.remainingOps)
     return ("(" + operand2.symbol + symbol + operand1.symbol + ")", operand2.remainingOps)
   }
 
