@@ -64,6 +64,8 @@ class CalculatorBrain {
       if let newVariableValues = getVariableValuesFrom(newProgram), newOpStack = getOpStackFrom(newProgram) {
         variableValues = newVariableValues
         opStack = newOpStack
+      } else {
+        println("failed to parse program")
       }
     }
   }
@@ -157,7 +159,7 @@ extension CalculatorBrain: Printable {
     case let .Operand(operand):
       return (removeDecimalZeroFrom("\(operand)"), remainingOps)
     case let .Constant(symbol, _):
-      return ("\(symbol)", remainingOps)
+      return (symbol, remainingOps)
     case let .Variable(symbol):
       return (symbol, remainingOps)
     case let .UnaryOperation(symbol, _):
@@ -169,7 +171,7 @@ extension CalculatorBrain: Printable {
 
   private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     let operand = getNextExpressionFrom(remainingOps)
-    return (symbol + "(" + removeOutsideParenFrom("\(operand.symbol)") + ")", operand.remainingOps)
+    return (symbol + "(" + removeOutsideParenFrom(operand.symbol) + ")", operand.remainingOps)
   }
 
   private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
