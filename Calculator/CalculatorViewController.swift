@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CalculatorViewController.swift
 //  Calculator
 //
 //  Created by Kristofer Hanes on 2015 05 06.
@@ -69,13 +69,12 @@ class CalculatorViewController: UIViewController {
   private func bindModelToView() {
     displayValue = brain.evaluate()
     let description = brain.description
-    let suffix = count(description) > 0 ? "=" : " "
+    let suffix = description != "" ? "=" : " "
     historyDisplay.text = description + suffix
   }
 
   private var displayValue: Double? {
-    get {
-      return flatMap(display.text) { x in doubleFromString(x) } }
+    get { return flatMap(display.text) { x in doubleFromString(x) } }
     set {
       if let nv = newValue {
         display.text = nv == 0 ? "0" : "\(nv)"
@@ -84,6 +83,6 @@ class CalculatorViewController: UIViewController {
       }
     }
   }
-
+  
 }
 
