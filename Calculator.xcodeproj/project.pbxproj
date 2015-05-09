@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5E6EDA291AFAD92D00A1B0CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6EDA281AFAD92D00A1B0CC /* AppDelegate.swift */; };
-		5E6EDA2B1AFAD92D00A1B0CC /* CalculatorViewController-old.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6EDA2A1AFAD92D00A1B0CC /* CalculatorViewController-old.swift */; };
 		5E6EDA2E1AFAD92D00A1B0CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E6EDA2C1AFAD92D00A1B0CC /* Main.storyboard */; };
 		5E6EDA301AFAD92D00A1B0CC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E6EDA2F1AFAD92D00A1B0CC /* Images.xcassets */; };
 		5E6EDA331AFAD92D00A1B0CC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E6EDA311AFAD92D00A1B0CC /* LaunchScreen.xib */; };
@@ -32,7 +31,6 @@
 		5E6EDA231AFAD92D00A1B0CC /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6EDA271AFAD92D00A1B0CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E6EDA281AFAD92D00A1B0CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5E6EDA2A1AFAD92D00A1B0CC /* CalculatorViewController-old.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CalculatorViewController-old.swift"; sourceTree = "<group>"; };
 		5E6EDA2D1AFAD92D00A1B0CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5E6EDA2F1AFAD92D00A1B0CC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5E6EDA321AFAD92D00A1B0CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -84,7 +82,6 @@
 			isa = PBXGroup;
 			children = (
 				5E6EDA2C1AFAD92D00A1B0CC /* Main.storyboard */,
-				5E6EDA2A1AFAD92D00A1B0CC /* CalculatorViewController-old.swift */,
 				5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */,
 				5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */,
 				5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */,
@@ -224,7 +221,6 @@
 			files = (
 				5EC91FCD1AFDAA6700B02972 /* CalculatorViewController.swift in Sources */,
 				5EDAE85E1AFAFAF5002B1AD2 /* CalculatorBrain.swift in Sources */,
-				5E6EDA2B1AFAD92D00A1B0CC /* CalculatorViewController-old.swift in Sources */,
 				5E6EDA291AFAD92D00A1B0CC /* AppDelegate.swift in Sources */,
 				5EDAE8601AFC58FF002B1AD2 /* Helpers.swift in Sources */,
 			);
