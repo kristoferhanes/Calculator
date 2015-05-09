@@ -16,6 +16,7 @@ class CalculatorBrain {
     case Variable(String)
     case UnaryOperation(String, Double->Double)
     case BinaryOperation(String, (Double,Double)->Double)
+
     var description: String {
       switch self {
       case let .Operand(operand):
@@ -55,13 +56,29 @@ class CalculatorBrain {
 
   var program: PropertyList {
     get {
-      return opStack.map { x in x.description }
+      let result: [String:AnyObject] = ["opStack":opStack.map { x in x.description }, "variableValues":variableValues]
+      return result
     }
     set {
-      let opSymbols = newValue as? [String]
-      let newOpStack = opSymbols?.map { x in self.knownOps[x] ?? flatMap(doubleFromString(x)) { x in Op.Operand(x) } }
-      opStack = (newOpStack?.filter { x in x != nil })?.map { x in x! } ?? opStack
+      let newProgram = newValue as? [String:AnyObject]
+      if let newVariableValues = getVariableValuesFrom(newProgram), newOpStack = getOpStackFrom(newProgram) {
+        variableValues = newVariableValues
+        opStack = newOpStack
+      }
     }
+  }
+
+  private func getVariableValuesFrom(program: [String:AnyObject]?) -> [String:Double]? {
+    return program?["variableValues"] as? [String:Double]
+  }
+
+  private func getOpStackFrom(program: [String:AnyObject]?) -> [Op]? {
+    let newOps = program?["opStack"] as? [String]
+    return newOps?.map { x in self.knownOps[x] ?? self.operandFromString(x) ?? Op.Variable(x) }
+  }
+
+  private func operandFromString(s: String) -> Op? {
+    return flatMap(doubleFromString(s)) { x in Op.Operand(x) }
   }
 
   private func evaluate(var remainingOps: [Op]) -> (result: Double, remainingOps: [Op])? {
@@ -103,8 +120,7 @@ class CalculatorBrain {
   }
 
   func performOperation(symbol: String) {
-    let operation = knownOps[symbol] ?? Op.Variable(symbol)
-    opStack.append(operation)
+    opStack.append(knownOps[symbol] ?? Op.Variable(symbol))
   }
 
   func pushOperand(symbol: String) {
@@ -126,20 +142,20 @@ extension CalculatorBrain: Printable {
 
   var description: String {
     var remainingOps = opStack
-    let results = GeneratorOf<String> {
+    let expressions = GeneratorOf<String> {
       if remainingOps.isEmpty { return nil }
-      let (result, remaining) = self.getDescription(remainingOps)
+      let (expression, remaining) = self.getNextExpressionFrom(remainingOps)
       remainingOps = remaining
-      return self.removeParen(result)
+      return self.removeOutsideParenFrom(expression)
     }
-    return ", ".join(reduce(results, [], { accum, x in [x] + accum }))
+    return ", ".join(reduce(expressions, []) { accum, x in [x] + accum })
   }
 
-  private func getDescription(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+  private func getNextExpressionFrom(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
     if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
     switch remainingOps.removeLast() {
     case let .Operand(operand):
-      return (stripDecimalZero("\(operand)"), remainingOps)
+      return (removeDecimalZeroFrom("\(operand)"), remainingOps)
     case let .Constant(symbol, _):
       return ("\(symbol)", remainingOps)
     case let .Variable(symbol):
@@ -152,17 +168,17 @@ extension CalculatorBrain: Printable {
   }
 
   private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand = getDescription(remainingOps)
-    return (symbol + "(" + removeParen("\(operand.symbol)") + ")", operand.remainingOps)
+    let operand = getNextExpressionFrom(remainingOps)
+    return (symbol + "(" + removeOutsideParenFrom("\(operand.symbol)") + ")", operand.remainingOps)
   }
 
   private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand1 = getDescription(remainingOps)
-    let operand2 = getDescription(operand1.remainingOps)
+    let operand1 = getNextExpressionFrom(remainingOps)
+    let operand2 = getNextExpressionFrom(operand1.remainingOps)
     return ("(" + operand2.symbol + symbol + operand1.symbol + ")", operand2.remainingOps)
   }
 
-  private func stripDecimalZero(s: String) -> String {
+  private func removeDecimalZeroFrom(s: String) -> String {
     if count(s) < 2 { return s }
     var result = Array(s)
     let lastTwo = result.endIndex-2...result.endIndex-1
@@ -173,7 +189,7 @@ extension CalculatorBrain: Printable {
     return String(result)
   }
 
-  private func removeParen(s: String) -> String {
+  private func removeOutsideParenFrom(s: String) -> String {
     if count(s) < 2 { return s }
     var result = Array(s)
     if result.first! == "(" && result.last! == ")" {
