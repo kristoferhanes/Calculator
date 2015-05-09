@@ -77,7 +77,7 @@ class CalculatorViewController: UIViewController {
     get { return flatMap(display.text) { x in doubleFromString(x) } }
     set {
       if let nv = newValue {
-        display.text = nv == 0 ? "0" : "\(nv)"
+        display.text = removeDecimalZeroFrom("\(nv)")
       } else {
         display.text = " "
       }

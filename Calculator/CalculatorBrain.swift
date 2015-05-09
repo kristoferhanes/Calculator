@@ -148,7 +148,7 @@ extension CalculatorBrain: Printable {
       if remainingOps.isEmpty { return nil }
       let (expression, remaining) = self.getNextExpressionFrom(remainingOps)
       remainingOps = remaining
-      return self.removeOutsideParenFrom(expression)
+      return removeOutsideParenFrom(expression)
     }
     return ", ".join(reduce(expressions, []) { accum, x in [x] + accum })
   }
@@ -180,25 +180,15 @@ extension CalculatorBrain: Printable {
     return ("(" + operand2.symbol + symbol + operand1.symbol + ")", operand2.remainingOps)
   }
 
-  private func removeDecimalZeroFrom(s: String) -> String {
-    if count(s) < 2 { return s }
-    var result = Array(s)
-    let lastTwo = result.endIndex-2...result.endIndex-1
-    let end = result[lastTwo]
-    if end.first! == "." && end.last! == "0" {
-      result.removeRange(lastTwo)
-    }
-    return String(result)
-  }
+}
 
-  private func removeOutsideParenFrom(s: String) -> String {
-    if count(s) < 2 { return s }
-    var result = Array(s)
-    if result.first! == "(" && result.last! == ")" {
-      result.removeAtIndex(result.startIndex)
-      result.removeAtIndex(result.endIndex-1)
-    }
-    return String(result)
-  }
 
+private func removeOutsideParenFrom(s: String) -> String {
+  if count(s) < 2 { return s }
+  var result = Array(s)
+  if result.first! == "(" && result.last! == ")" {
+    result.removeAtIndex(result.startIndex)
+    result.removeAtIndex(result.endIndex-1)
+  }
+  return String(result)
 }

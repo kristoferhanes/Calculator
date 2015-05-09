@@ -15,3 +15,15 @@ func flatMap<T,U>(x: T?, y: T?, f: (T,T)->U?) -> U? {
 func doubleFromString(s: String) -> Double? {
   return NSNumberFormatter().numberFromString(s)?.doubleValue
 }
+
+func removeDecimalZeroFrom(s: String) -> String {
+  if count(s) < 2 { return s }
+  var result = Array(s)
+  let lastTwo = result.endIndex-2...result.endIndex-1
+  let end = result[lastTwo]
+  if end.first! == "." && end.last! == "0" {
+    result.removeRange(lastTwo)
+  }
+  return String(result)
+}
+
