@@ -65,7 +65,7 @@ class CalculatorBrain {
         variableValues = newVariableValues
         opStack = newOpStack
       } else {
-        println("Error: failed to parse program")
+        println("failed to parse program")
       }
     }
   }

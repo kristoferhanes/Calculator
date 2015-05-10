@@ -14,6 +14,7 @@ class CalculatorViewController: UIViewController {
     static let SetMemoryButtonTitle = "→M"
     static let MemoryVariableName = "M"
     static let ShowGraphSegueID = "ShowGraph"
+    static let CalculatorProgramKey = "CalculatorViewController.brain.program"
   }
 
   @IBOutlet
@@ -35,19 +36,41 @@ class CalculatorViewController: UIViewController {
     }
   }
 
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    brain.program = getCalculatorProgramFromDefaults() ?? []
+    bindModelToView()
+    configGraphViewController(graphViewControllerFrom(splitViewController?.viewControllers[1]))
+  }
+
+  private let defaults = NSUserDefaults.standardUserDefaults()
+
+  private func getCalculatorProgramFromDefaults() -> CalculatorBrain.PropertyList? {
+    return defaults.objectForKey(Constants.CalculatorProgramKey)
+  }
+
+  private func setCalculatorProgramFromDefaults(program: CalculatorBrain.PropertyList) {
+    defaults.setObject(program, forKey: Constants.CalculatorProgramKey)
+  }
+
   private func appendToDisplay(s: String) {
     if s != "." || !contains(display.text ?? "", ".") {
       display.text = flatMap(display.text) { x in x + s }
     }
   }
 
-  @IBAction
-  func clear() {
+  @IBAction func clear() {
     brain.clear()
-    brain.clearVariables()
+    setCalculatorProgramFromDefaults(brain.program)
     bindModelToView()
     displayValue = 0
   }
+
+  @IBAction func clearAll() {
+    brain.clearVariables()
+    clear()
+  }
+
 
   @IBAction
   func setVariable(sender: UIButton) {
@@ -56,6 +79,7 @@ class CalculatorViewController: UIViewController {
         ] = displayValue
       userIsTyping = false
     }
+    setCalculatorProgramFromDefaults(brain.program)
     bindModelToView()
   }
 
@@ -65,6 +89,7 @@ class CalculatorViewController: UIViewController {
     if let op = sender.currentTitle {
       brain.performOperation(op)
     }
+    setCalculatorProgramFromDefaults(brain.program)
     bindModelToView()
   }
 
@@ -74,21 +99,22 @@ class CalculatorViewController: UIViewController {
     if let dv = displayValue {
       brain.pushOperand(dv)
     }
+    setCalculatorProgramFromDefaults(brain.program)
     bindModelToView()
   }
 
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     switch segue.identifier ?? "" {
     case Constants.ShowGraphSegueID:
-      configGraphViewController(graphViewControllerFrom(segue))
+      configGraphViewController(graphViewControllerFrom(segue.destinationViewController))
     default: break
     }
   }
 
-  private func graphViewControllerFrom(segue: UIStoryboardSegue) -> GraphViewController? {
-    let dvc = segue.destinationViewController as? UIViewController
-    let vvc = (dvc as? UINavigationController)?.visibleViewController
-    return vvc as? GraphViewController ?? dvc as? GraphViewController
+  private func graphViewControllerFrom(someObject: AnyObject?) -> GraphViewController? {
+    let vc = someObject as? UIViewController
+    let vvc = (vc as? UINavigationController)?.visibleViewController
+    return vvc as? GraphViewController ?? vc as? GraphViewController
   }
 
   private func configGraphViewController(gvc: GraphViewController?) {
