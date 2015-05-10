@@ -16,12 +16,16 @@ class CalculatorViewController: UIViewController {
     static let ShowGraphSegueID = "ShowGraph"
   }
 
-  @IBOutlet weak var display: UILabel!
-  @IBOutlet weak var historyDisplay: UILabel!
+  @IBOutlet
+  weak var display: UILabel!
+
+  @IBOutlet
+  weak var historyDisplay: UILabel!
   private var userIsTyping = false
   private var brain = CalculatorBrain()
 
-  @IBAction func appendDigit(sender: UIButton) {
+  @IBAction
+  func appendDigit(sender: UIButton) {
     let digit = sender.currentTitle ?? ""
     if userIsTyping {
       appendToDisplay(digit)
@@ -37,14 +41,16 @@ class CalculatorViewController: UIViewController {
     }
   }
 
-  @IBAction func clear() {
+  @IBAction
+  func clear() {
     brain.clear()
     brain.clearVariables()
     bindModelToView()
     displayValue = 0
   }
 
-  @IBAction func setVariable(sender: UIButton) {
+  @IBAction
+  func setVariable(sender: UIButton) {
     if sender.currentTitle == Constants.SetMemoryButtonTitle {
       brain.variableValues[Constants.MemoryVariableName
         ] = displayValue
@@ -53,7 +59,8 @@ class CalculatorViewController: UIViewController {
     bindModelToView()
   }
 
-  @IBAction func operate(sender: UIButton) {
+  @IBAction
+  func operate(sender: UIButton) {
     if userIsTyping { enter() }
     if let op = sender.currentTitle {
       brain.performOperation(op)
@@ -61,7 +68,8 @@ class CalculatorViewController: UIViewController {
     bindModelToView()
   }
 
-  @IBAction func enter() {
+  @IBAction
+  func enter() {
     userIsTyping = false
     if let dv = displayValue {
       brain.pushOperand(dv)
