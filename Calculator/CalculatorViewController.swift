@@ -10,6 +10,12 @@ import UIKit
 
 class CalculatorViewController: UIViewController {
 
+  private struct Constants {
+    static let SetMemoryButtonTitle = "→M"
+    static let MemoryVariableName = "M"
+    static let ShowGraphSegueID = "ShowGraph"
+  }
+
   @IBOutlet weak var display: UILabel!
   @IBOutlet weak var historyDisplay: UILabel!
   private var userIsTyping = false
@@ -20,19 +26,15 @@ class CalculatorViewController: UIViewController {
     if userIsTyping {
       appendToDisplay(digit)
     } else {
-      setDisplayTo(digit)
+      display.text = digit
       userIsTyping = true
     }
   }
 
   private func appendToDisplay(s: String) {
     if s != "." || !contains(display.text ?? "", ".") {
-      setDisplayTo(flatMap(display.text) { x in x + s })
+      display.text = flatMap(display.text) { x in x + s }
     }
-  }
-
-  private func setDisplayTo(s: String?) {
-    display.text = s
   }
 
   @IBAction func clear() {
@@ -43,8 +45,9 @@ class CalculatorViewController: UIViewController {
   }
 
   @IBAction func setVariable(sender: UIButton) {
-    if sender.currentTitle == "→M" {
-      brain.variableValues["M"] = displayValue
+    if sender.currentTitle == Constants.SetMemoryButtonTitle {
+      brain.variableValues[Constants.MemoryVariableName
+        ] = displayValue
       userIsTyping = false
     }
     bindModelToView()
@@ -66,6 +69,30 @@ class CalculatorViewController: UIViewController {
     bindModelToView()
   }
 
+  override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    switch segue.identifier ?? "" {
+    case Constants.ShowGraphSegueID:
+      configGraphViewController(graphViewControllerFrom(segue))
+    default: break
+    }
+  }
+
+  private func graphViewControllerFrom(segue: UIStoryboardSegue) -> GraphViewController? {
+    let dvc = segue.destinationViewController as? UIViewController
+    let vvc = (dvc as? UINavigationController)?.visibleViewController
+    return vvc as? GraphViewController ?? dvc as? GraphViewController
+  }
+
+  private func configGraphViewController(gvc: GraphViewController?) {
+    gvc?.dataSource = self
+    gvc?.title = lastExpression(brain.description)
+  }
+
+  private func lastExpression(expressionsString: String) -> String {
+    let expressions = expressionsString.componentsSeparatedByString(",")
+    return expressions.isEmpty ? "" : removeSurroundingWhitespace(expressions.last!)
+  }
+  
   private func bindModelToView() {
     displayValue = brain.evaluate()
     let description = brain.description
@@ -86,3 +113,20 @@ class CalculatorViewController: UIViewController {
   
 }
 
+
+extension CalculatorViewController: GraphViewControllerDataSource {
+
+  func yForX(x: Double) -> Double? {
+    let oldValue = brain.variableValues[Constants.MemoryVariableName]
+    brain.variableValues[Constants.MemoryVariableName] = x
+    let result = brain.evaluate()
+    brain.variableValues[Constants.MemoryVariableName] = oldValue
+    return result
+  }
+
+}
+
+
+private func removeSurroundingWhitespace(s: String) -> String {
+  return s.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+}

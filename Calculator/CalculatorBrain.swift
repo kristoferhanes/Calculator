@@ -113,7 +113,7 @@ class CalculatorBrain {
   func evaluate() -> Double? {
     return flatMap(evaluate(opStack)) { x in
       println("\(opStack) = \(x.result) with \(x.remainingOps) left over.")
-      return x.result
+      return x.result.isInfinite || x.result.isNaN ? nil : x.result
     }
   }
 
