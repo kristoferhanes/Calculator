@@ -36,8 +36,9 @@ class CalculatorBrain {
   private var opStack = [Op]()
   private let knownOps: [String:Op]
 
-  var variableValues = [String:Double]()
-  
+  typealias VariableValuesType = [String:Double]
+  var variableValues = VariableValuesType()
+
   init() {
     var initOps = [String:Op]()
     func initOp(op: Op) { initOps[op.description] = op }
@@ -70,8 +71,8 @@ class CalculatorBrain {
     }
   }
 
-  private func getVariableValuesFrom(program: [String:AnyObject]?) -> [String:Double]? {
-    return program?["variableValues"] as? [String:Double]
+  private func getVariableValuesFrom(program: [String:AnyObject]?) -> VariableValuesType? {
+    return program?["variableValues"] as? VariableValuesType
   }
 
   private func getOpStackFrom(program: [String:AnyObject]?) -> [Op]? {
@@ -131,11 +132,10 @@ class CalculatorBrain {
   }
 
   func clearVariables() {
-    variableValues = [String:Double]()
+    variableValues = VariableValuesType()
   }
 
 }
-
 
 extension CalculatorBrain: Printable {
 

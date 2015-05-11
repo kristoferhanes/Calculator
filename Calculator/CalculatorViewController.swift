@@ -24,6 +24,7 @@ class CalculatorViewController: UIViewController {
   weak var historyDisplay: UILabel!
   private var userIsTyping = false
   private var brain = CalculatorBrain()
+  private var oldVariableValues: CalculatorBrain.VariableValuesType?
 
   @IBAction
   func appendDigit(sender: UIButton) {
@@ -70,7 +71,6 @@ class CalculatorViewController: UIViewController {
     brain.clearVariables()
     clear()
   }
-
 
   @IBAction
   func setVariable(sender: UIButton) {
@@ -122,11 +122,6 @@ class CalculatorViewController: UIViewController {
     gvc?.title = lastExpression(brain.description)
   }
 
-  private func lastExpression(expressionsString: String) -> String {
-    let expressions = expressionsString.componentsSeparatedByString(",")
-    return expressions.isEmpty ? "" : removeSurroundingWhitespace(expressions.last!)
-  }
-  
   private func bindModelToView() {
     displayValue = brain.evaluate()
     let description = brain.description
@@ -144,22 +139,32 @@ class CalculatorViewController: UIViewController {
       }
     }
   }
-  
-}
 
+}
 
 extension CalculatorViewController: GraphViewControllerDataSource {
 
   func yForX(x: Double) -> Double? {
-    let oldValue = brain.variableValues[Constants.MemoryVariableName]
     brain.variableValues[Constants.MemoryVariableName] = x
-    let result = brain.evaluate()
-    brain.variableValues[Constants.MemoryVariableName] = oldValue
-    return result
+    return brain.evaluate()
+  }
+
+  func startProviding() {
+    oldVariableValues = brain.variableValues
+  }
+
+  func stopProviding() {
+    if oldVariableValues != nil {
+      brain.variableValues = oldVariableValues!
+    }
   }
 
 }
 
+private func lastExpression(expressionsString: String) -> String {
+  let expressions = expressionsString.componentsSeparatedByString(",")
+  return expressions.isEmpty ? "" : removeSurroundingWhitespace(expressions.last!)
+}
 
 private func removeSurroundingWhitespace(s: String) -> String {
   return s.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())

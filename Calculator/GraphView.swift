@@ -10,17 +10,22 @@ import UIKit
 
 protocol GraphViewDataSource {
   func yForX(x: Double) -> Double?
+  func startProviding()
+  func stopProviding()
 }
 
 @IBDesignable
 class GraphView: UIView {
 
+  @IBInspectable
+  var color: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+
+  @IBInspectable
+  var pointsPerUnit: CGFloat = 1 { didSet { setNeedsDisplay() } }
+  
   private let axesDrawer = AxesDrawer()
-
   var dataSource: GraphViewDataSource? { didSet { setNeedsDisplay() } }
-
   var origin: CGPoint? { didSet { setNeedsDisplay() } }
-
   var precision: CGFloat = 1 {
     didSet {
       if precision < 1 { precision = 1 }
@@ -28,14 +33,8 @@ class GraphView: UIView {
     }
   }
 
-  @IBInspectable
-  var color: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-  
-  @IBInspectable
-  var pointsPerUnit: CGFloat = 1 { didSet { setNeedsDisplay() } }
-
   override func drawRect(rect: CGRect) {
-    if origin == nil { origin = bounds.center }
+    if origin == nil { origin = CGPoint(x: bounds.midX, y: bounds.midY) }
     axesDrawer.contentScaleFactor = contentScaleFactor
     axesDrawer.color = color
     axesDrawer.drawAxesInRect(bounds, origin: origin!, pointsPerUnit: pointsPerUnit)
@@ -43,38 +42,15 @@ class GraphView: UIView {
   }
 
   private func drawGraph(rect: CGRect) {
-    setStrokeColor(color) {
-      let path = UIBezierPath()
+    dataSource?.startProviding()
+    strokePathWithColor(color) { path in
       var drawing = false
-      var x = rect.minX
-      let point = flatMap(self.yForX(x)) { y in CGPoint(x: x, y: y) }
-      drawing = self.drawPoint(path, point: point, drawing: drawing)
-      while true {
-        x += self.precision
-        if x >= rect.maxX { break }
+      for var x = rect.minX; x <= rect.maxX + self.precision; x += self.precision {
         let point = flatMap(self.yForX(x)) { y in CGPoint(x: x, y: y) }
-        drawing = self.drawPoint(path, point: point, drawing: drawing)
+        drawing = drawPoint(path, point, drawing)
       }
-      path.stroke()
     }
-  }
-
-  func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {
-    if point == nil { return false }
-    lineTo(path, point: CGPoint(x: point!.x, y: point!.y), drawing: drawing)
-    return true
-  }
-
-  func lineTo(path: UIBezierPath, point: CGPoint, drawing: Bool) {
-    if drawing { path.addLineToPoint(point) }
-    else { path.moveToPoint(point) }
-  }
-
-  func setStrokeColor(color: UIColor, f: ()->()) {
-    CGContextSaveGState(UIGraphicsGetCurrentContext())
-    color.setStroke()
-    f()
-    CGContextRestoreGState(UIGraphicsGetCurrentContext())
+    dataSource?.stopProviding()
   }
 
   private func yForX(x: CGFloat) -> CGFloat? {
@@ -92,9 +68,22 @@ class GraphView: UIView {
 
 }
 
+private func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {
+  if point == nil { return false }
+  lineTo(path, point!, drawing)
+  return true
+}
 
-private extension CGRect {
-  var center: CGPoint {
-    return CGPoint(x: midX, y: midY)
-  }
+private func lineTo(path: UIBezierPath, point: CGPoint, drawing: Bool) {
+  if drawing { path.addLineToPoint(point) }
+  else { path.moveToPoint(point) }
+}
+
+private func strokePathWithColor(color: UIColor, f: (UIBezierPath)->Void) {
+  CGContextSaveGState(UIGraphicsGetCurrentContext())
+  let path = UIBezierPath()
+  f(path)
+  color.setStroke()
+  path.stroke()
+  CGContextRestoreGState(UIGraphicsGetCurrentContext())
 }
