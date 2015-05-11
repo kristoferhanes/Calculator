@@ -37,7 +37,8 @@ class GraphView: UIView {
     if origin == nil { origin = CGPoint(x: bounds.midX, y: bounds.midY) }
     axesDrawer.contentScaleFactor = contentScaleFactor
     axesDrawer.color = color
-    axesDrawer.drawAxesInRect(bounds, origin: origin!, pointsPerUnit: pointsPerUnit)
+    axesDrawer.highQuality = precision <= 1
+    axesDrawer.drawAxesInRect(rect, origin: origin!, pointsPerUnit: pointsPerUnit)
     drawGraph(rect)
   }
 

@@ -17,6 +17,7 @@ class AxesDrawer {
   var color = UIColor.blueColor()
   var minimumPointsPerHashmark: CGFloat = 40
   var contentScaleFactor: CGFloat = 1 // set this from UIView's contentScaleFactor to position axes with maximum accuracy
+  var highQuality = true
 
   convenience init(color: UIColor, contentScaleFactor: CGFloat) {
     self.init()
@@ -170,7 +171,7 @@ class AxesDrawer {
   // the lines will still be sharp in that case, but might be a pixel (or more theoretically) off of where they should be
 
   private func alignedPoint(#x: CGFloat, y: CGFloat, insideBounds: CGRect? = nil) -> CGPoint? {
-    let point = CGPoint(x: align(x), y: align(y))
+    let point = highQuality ? CGPoint(x: align(x), y: align(y)) : CGPoint(x: x, y: y)
     if let permissibleBounds = insideBounds {
       if (!CGRectContainsPoint(permissibleBounds, point)) {
         return nil
@@ -189,5 +190,5 @@ extension CGRect {
   init(center: CGPoint, size: CGSize) {
     self.init(x: center.x-size.width/2, y: center.y-size.height/2, width: size.width, height: size.height)
   }
-
+  
 }
