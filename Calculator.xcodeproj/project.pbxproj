@@ -15,6 +15,7 @@
 		5E6EDA331AFAD92D00A1B0CC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E6EDA311AFAD92D00A1B0CC /* LaunchScreen.xib */; };
 		5E6EDA3F1AFAD92D00A1B0CC /* CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6EDA3E1AFAD92D00A1B0CC /* CalculatorTests.swift */; };
 		5E79182E1AFF35E4008145C8 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E79182D1AFF35E4008145C8 /* GraphView.swift */; };
+		5EC02A0C1B016B650009FEF5 /* MasterFirstSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */; };
 		5EC91FCD1AFDAA6700B02972 /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */; };
 		5EDAE85E1AFAFAF5002B1AD2 /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */; };
 		5EDAE8601AFC58FF002B1AD2 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */; };
@@ -43,6 +44,7 @@
 		5E6EDA3D1AFAD92D00A1B0CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E6EDA3E1AFAD92D00A1B0CC /* CalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorTests.swift; sourceTree = "<group>"; };
 		5E79182D1AFF35E4008145C8 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
+		5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFirstSplitViewController.swift; sourceTree = "<group>"; };
 		5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
 		5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
 		5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				5E4EF3481AFF2B30002B7979 /* Main.storyboard */,
 				5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */,
 				5E4EF3441AFF29DB002B7979 /* GraphViewController.swift */,
+				5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */,
 				5E79182D1AFF35E4008145C8 /* GraphView.swift */,
 				5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */,
 				5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */,
@@ -234,6 +237,7 @@
 				5E4EF3431AFF29D4002B7979 /* AxesDrawer.swift in Sources */,
 				5E4EF34B1AFF2D41002B7979 /* GraphViewController.swift in Sources */,
 				5E6EDA291AFAD92D00A1B0CC /* AppDelegate.swift in Sources */,
+				5EC02A0C1B016B650009FEF5 /* MasterFirstSplitViewController.swift in Sources */,
 				5EDAE8601AFC58FF002B1AD2 /* Helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
