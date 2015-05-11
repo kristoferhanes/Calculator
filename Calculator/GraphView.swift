@@ -9,7 +9,7 @@
 import UIKit
 
 protocol GraphViewDataSource {
-  func yForX(x: Double) -> Double?
+  func yForX(x: CGFloat) -> CGFloat?
   func startProviding()
   func stopProviding()
 }
@@ -45,27 +45,31 @@ class GraphView: UIView {
     dataSource?.startProviding()
     strokePathWithColor(color) { path in
       var drawing = false
-      for var x = rect.minX; x <= rect.maxX + self.precision; x += self.precision {
-        let point = flatMap(self.yForX(x)) { y in CGPoint(x: x, y: y) }
+      let precision = self.precision
+      let origin = self.origin ?? CGPoint(x: self.bounds.midX, y: self.bounds.midY)
+      let pointsPerUnit = self.pointsPerUnit
+      let dataSource = self.dataSource
+      let maxX = rect.maxX + precision
+      for var x = rect.minX; x < maxX; x += precision {
+        let point = flatMap(yForX(x, origin, pointsPerUnit, dataSource)) { y in CGPoint(x: x, y: y) }
         drawing = drawPoint(path, point, drawing)
       }
     }
     dataSource?.stopProviding()
   }
 
-  private func yForX(x: CGFloat) -> CGFloat? {
-    if origin == nil { return nil }
-    return flatMap(dataSource?.yForX(viewToReal(x, origin: origin!.x))) { y in realToView(-y, origin: origin!.y) }
-  }
+}
 
-  private func viewToReal(coordinate: CGFloat, origin: CGFloat) -> Double {
-    return (Double(coordinate) - Double(origin)) / Double(pointsPerUnit)
-  }
+private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat, dataSource: GraphViewDataSource?) -> CGFloat? {
+  return flatMap(dataSource?.yForX(viewToReal(x, origin.x, pointPerUnit))) { y in realToView(-y, origin.y, pointPerUnit) }
+}
 
-  private func realToView(coordinate: Double, origin: CGFloat) -> CGFloat {
-    return CGFloat(coordinate) * pointsPerUnit + origin
-  }
+private func viewToReal(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGFloat) -> CGFloat {
+  return (coordinate - origin) / pointsPerUnit
+}
 
+private func realToView(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGFloat) -> CGFloat {
+  return coordinate * pointsPerUnit + origin
 }
 
 private func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {

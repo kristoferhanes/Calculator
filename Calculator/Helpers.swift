@@ -8,8 +8,8 @@
 
 import Foundation
 
-func flatMap<A,B,C>(a: A?, b: B?, f: (A,B)->C?) -> C? {
-  return flatMap(a) { a in flatMap(b) { b in f(a, b) } }
+func flatMap<X,Y,Z>(x: X?, y: Y?, f: (X,Y)->Z?) -> Z? {
+  return flatMap(x) { x in flatMap(y) { y in f(x, y) } }
 }
 
 func doubleFromString(s: String) -> Double? {

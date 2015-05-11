@@ -17,17 +17,14 @@ class CalculatorViewController: UIViewController {
     static let CalculatorProgramKey = "CalculatorViewController.brain.program"
   }
 
-  @IBOutlet
-  weak var display: UILabel!
+  @IBOutlet weak var display: UILabel!
 
-  @IBOutlet
-  weak var historyDisplay: UILabel!
+  @IBOutlet weak var historyDisplay: UILabel!
   private var userIsTyping = false
   private var brain = CalculatorBrain()
   private var oldVariableValues: CalculatorBrain.VariableValuesType?
 
-  @IBAction
-  func appendDigit(sender: UIButton) {
+  @IBAction func appendDigit(sender: UIButton) {
     let digit = sender.currentTitle ?? ""
     if userIsTyping {
       appendToDisplay(digit)
@@ -72,8 +69,7 @@ class CalculatorViewController: UIViewController {
     clear()
   }
 
-  @IBAction
-  func setVariable(sender: UIButton) {
+  @IBAction func setVariable(sender: UIButton) {
     if sender.currentTitle == Constants.SetMemoryButtonTitle {
       brain.variableValues[Constants.MemoryVariableName
         ] = displayValue
@@ -83,8 +79,7 @@ class CalculatorViewController: UIViewController {
     bindModelToView()
   }
 
-  @IBAction
-  func operate(sender: UIButton) {
+  @IBAction func operate(sender: UIButton) {
     if userIsTyping { enter() }
     if let op = sender.currentTitle {
       brain.performOperation(op)
@@ -93,8 +88,7 @@ class CalculatorViewController: UIViewController {
     bindModelToView()
   }
 
-  @IBAction
-  func enter() {
+  @IBAction func enter() {
     userIsTyping = false
     if let dv = displayValue {
       brain.pushOperand(dv)
@@ -144,9 +138,9 @@ class CalculatorViewController: UIViewController {
 
 extension CalculatorViewController: GraphViewControllerDataSource {
 
-  func yForX(x: Double) -> Double? {
-    brain.variableValues[Constants.MemoryVariableName] = x
-    return brain.evaluate()
+  func yForX(x: CGFloat) -> CGFloat? {
+    brain.variableValues[Constants.MemoryVariableName] = Double(x)
+    return flatMap(brain.evaluate()) { x in CGFloat(x) }
   }
 
   func startProviding() {
