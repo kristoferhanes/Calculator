@@ -10,6 +10,11 @@ import Foundation
 
 class CalculatorBrain {
 
+  struct Constants {
+    static let OpStackProgramKey = "OpStackProgramKey"
+    static let VariableValuesProgramKey = "VariableValuesProgramKey"
+  }
+
   private enum Op: Printable {
     case Operand(Double)
     case Constant(String, Double)
@@ -57,7 +62,10 @@ class CalculatorBrain {
 
   var program: PropertyList {
     get {
-      let result: [String:AnyObject] = ["opStack":opStack.map { x in x.description }, "variableValues":variableValues]
+      let result: [String:AnyObject] = [
+        Constants.OpStackProgramKey:opStack.map { x in x.description },
+        Constants.VariableValuesProgramKey:variableValues
+      ]
       return result
     }
     set {
@@ -72,11 +80,11 @@ class CalculatorBrain {
   }
 
   private func getVariableValuesFrom(program: [String:AnyObject]?) -> VariableValuesType? {
-    return program?["variableValues"] as? VariableValuesType
+    return program?[Constants.VariableValuesProgramKey] as? VariableValuesType
   }
 
   private func getOpStackFrom(program: [String:AnyObject]?) -> [Op]? {
-    let newOps = program?["opStack"] as? [String]
+    let newOps = program?[Constants.OpStackProgramKey] as? [String]
     return newOps?.map { x in self.knownOps[x] ?? self.operandFromString(x) ?? Op.Variable(x) }
   }
 
@@ -84,35 +92,36 @@ class CalculatorBrain {
     return flatMap(doubleFromString(s)) { x in Op.Operand(x) }
   }
 
-  private func evaluate(var remainingOps: [Op]) -> (result: Double, remainingOps: [Op])? {
+  private func evaluate(remainingOps: ArraySlice<Op>) -> (result: Double, remainingOps: ArraySlice<Op>)? {
     if remainingOps.isEmpty { return nil }
-    switch remainingOps.removeLast() {
+    let remaining = remainingOps[0..<remainingOps.endIndex-1]
+    switch remainingOps.last! {
     case let .Operand(operand):
-      return (operand, remainingOps)
+      return (operand, remaining)
     case let .Constant(_, value):
-      return (value, remainingOps)
+      return (value, remaining)
     case let .Variable(symbol):
-      return flatMap(variableValues[symbol]) { x in (x, remainingOps) }
+      return flatMap(variableValues[symbol]) { x in (x, remaining) }
     case let .UnaryOperation(_, operation):
-      return unaryOp(operation, remainingOps)
+      return unaryOp(operation, remaining)
     case let .BinaryOperation(_, operation):
-      return binaryOp(operation, remainingOps)
+      return binaryOp(operation, remaining)
     }
   }
 
-  private func unaryOp(op: Double->Double, _ remainingOps: [Op]) -> (result: Double, remainingOps: [Op])? {
+  private func unaryOp(op: Double->Double, _ remainingOps: ArraySlice<Op>) -> (Double, ArraySlice<Op>)? {
     let opEvaluation = evaluate(remainingOps)
     return flatMap(opEvaluation) { x in (op(x.result), x.remainingOps) }
   }
 
-  private func binaryOp(op: (Double,Double)->Double, _ remainingOps: [Op]) -> (result: Double, remainingOps: [Op])? {
+  private func binaryOp(op: (Double,Double)->Double, _ remainingOps: ArraySlice<Op>) -> (Double, ArraySlice<Op>)? {
     let op1Evaluation = evaluate(remainingOps)
     let op2Evaluation = flatMap(op1Evaluation) { x in evaluate(x.remainingOps) }
     return flatMap(op1Evaluation, op2Evaluation) { x, y in (op(x.result, y.result), y.remainingOps) }
   }
 
   func evaluate() -> Double? {
-    return flatMap(evaluate(opStack)) { x in x.result.isInfinite || x.result.isNaN ? nil : x.result }
+    return flatMap(evaluate(ArraySlice(opStack))) { x in x.result.isInfinite || x.result.isNaN ? nil : x.result }
   }
 
   func pushOperand(operand: Double) {
@@ -140,52 +149,48 @@ class CalculatorBrain {
 extension CalculatorBrain: Printable {
 
   var description: String {
-    var remainingOps = opStack
-    let expressions = GeneratorOf<String> {
-      if remainingOps.isEmpty { return nil }
-      let (expression, remaining) = self.getPreviousExpressionFrom(remainingOps)
-      remainingOps = remaining
-      return removeOutsideParenFrom(expression)
-    }
-    return ", ".join(Array(expressions).reverse())
+    return ", ".join(expressions(ArraySlice(opStack)))
   }
 
-  private func getPreviousExpressionFrom(var remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
+  private func expressions(remainingOps: ArraySlice<Op>) -> [String] {
+    if remainingOps.isEmpty { return [] }
+    let (expression, remaining) = nextExpression(remainingOps)
+    return expressions(remaining) + [removeOutsideParen(expression)]
+  }
+
+  private func nextExpression(remainingOps: ArraySlice<Op>) -> (symbol: String, remainingOps: ArraySlice<Op>) {
     if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
-    switch remainingOps.removeLast() {
+    let remaining = remainingOps[0..<remainingOps.endIndex-1]
+    switch remainingOps.last! {
     case let .Operand(operand):
-      return (removeDecimalZeroFrom("\(operand)"), remainingOps)
+      return (removeDecimalZeroFrom("\(operand)"), remaining)
     case let .Constant(symbol, _):
-      return (symbol, remainingOps)
+      return (symbol, remaining)
     case let .Variable(symbol):
-      return (symbol, remainingOps)
+      return (symbol, remaining)
     case let .UnaryOperation(symbol, _):
-      return unaryOpDescription(symbol, remainingOps)
+      return unaryOpDescription(symbol, remaining)
     case let .BinaryOperation(symbol, _):
-      return binaryOpDescription(symbol, remainingOps)
+      return binaryOpDescription(symbol, remaining)
     }
   }
 
-  private func unaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand = getPreviousExpressionFrom(remainingOps)
-    return (symbol + "(" + removeOutsideParenFrom(operand.symbol) + ")", operand.remainingOps)
+  private func unaryOpDescription(opSymbol: String, _ remainingOps: ArraySlice<Op>) -> (String, ArraySlice<Op>) {
+    let operand = nextExpression(remainingOps)
+    return (opSymbol + "(" + removeOutsideParen(operand.symbol) + ")", operand.remainingOps)
   }
 
-  private func binaryOpDescription(symbol: String, _ remainingOps: [Op]) -> (symbol: String, remainingOps: [Op]) {
-    let operand1 = getPreviousExpressionFrom(remainingOps)
-    let operand2 = getPreviousExpressionFrom(operand1.remainingOps)
-    return ("(" + operand2.symbol + symbol + operand1.symbol + ")", operand2.remainingOps)
+  private func binaryOpDescription(opSymbol: String, _ remainingOps: ArraySlice<Op>) -> (String, ArraySlice<Op>) {
+    let operand1 = nextExpression(remainingOps)
+    let operand2 = nextExpression(operand1.remainingOps)
+    return ("(" + operand2.symbol + opSymbol + operand1.symbol + ")", operand2.remainingOps)
   }
 
 }
 
-
-private func removeOutsideParenFrom(s: String) -> String {
+private func removeOutsideParen(s: String) -> String {
   if count(s) < 2 { return s }
-  var result = Array(s)
-  if result.first! == "(" && result.last! == ")" {
-    result.removeAtIndex(result.startIndex)
-    result.removeAtIndex(result.endIndex-1)
-  }
-  return String(result)
+  let start = advance(s.startIndex, 1)
+  let end = advance(s.startIndex, count(s)-1)
+  return first(s) == "(" && last(s) == ")" ? s[start..<end] : s
 }

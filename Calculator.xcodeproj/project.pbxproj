@@ -92,11 +92,11 @@
 				5E4EF3481AFF2B30002B7979 /* Main.storyboard */,
 				5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */,
 				5E4EF3441AFF29DB002B7979 /* GraphViewController.swift */,
-				5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */,
 				5E79182D1AFF35E4008145C8 /* GraphView.swift */,
-				5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */,
 				5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */,
 				5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */,
+				5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */,
+				5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */,
 				5E6EDA261AFAD92D00A1B0CC /* Supporting Files */,
 			);
 			path = Calculator;

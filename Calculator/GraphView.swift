@@ -22,7 +22,7 @@ class GraphView: UIView {
 
   @IBInspectable
   var pointsPerUnit: CGFloat = 1 { didSet { setNeedsDisplay() } }
-  
+
   private let axesDrawer = AxesDrawer()
   var dataSource: GraphViewDataSource? { didSet { setNeedsDisplay() } }
   var origin: CGPoint? { didSet { setNeedsDisplay() } }
@@ -43,14 +43,14 @@ class GraphView: UIView {
   }
 
   private func drawGraph(rect: CGRect) {
+    var drawing = false
+    let precision = self.precision
+    let origin = self.origin ?? CGPoint(x: bounds.midX, y: bounds.midY)
+    let pointsPerUnit = self.pointsPerUnit
+    let dataSource = self.dataSource
+    let maxX = rect.maxX + precision
     dataSource?.startProviding()
     strokePathWithColor(color) { path in
-      var drawing = false
-      let precision = self.precision
-      let origin = self.origin ?? CGPoint(x: self.bounds.midX, y: self.bounds.midY)
-      let pointsPerUnit = self.pointsPerUnit
-      let dataSource = self.dataSource
-      let maxX = rect.maxX + precision
       for var x = rect.minX; x < maxX; x += precision {
         let point = flatMap(yForX(x, origin, pointsPerUnit, dataSource)) { y in CGPoint(x: x, y: y) }
         drawing = drawPoint(path, point, drawing)

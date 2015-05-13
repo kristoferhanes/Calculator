@@ -18,12 +18,7 @@ func doubleFromString(s: String) -> Double? {
 
 func removeDecimalZeroFrom(s: String) -> String {
   if count(s) < 2 { return s }
-  var result = Array(s)
-  let lastTwo = result.endIndex-2...result.endIndex-1
-  let end = result[lastTwo]
-  if end.first! == "." && end.last! == "0" {
-    result.removeRange(lastTwo)
-  }
-  return String(result)
+  let end = advance(s.startIndex, count(s)-2)
+  return s.substringFromIndex(end) == ".0" ? s[s.startIndex..<end] : s
 }
 
