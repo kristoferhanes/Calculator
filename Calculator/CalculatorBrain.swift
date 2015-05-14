@@ -158,7 +158,7 @@ extension CalculatorBrain: Printable {
     return expressions(remaining) + [removeOutsideParen(expression)]
   }
 
-  private func nextExpression(remainingOps: ArraySlice<Op>) -> (symbol: String, remainingOps: ArraySlice<Op>) {
+  private func nextExpression(remainingOps: ArraySlice<Op>) -> (expression: String, remaining: ArraySlice<Op>) {
     if remainingOps.isEmpty { return (opStack.isEmpty ? "" : "?", remainingOps) }
     let remaining = remainingOps[0..<remainingOps.endIndex-1]
     switch remainingOps.last! {
@@ -177,13 +177,13 @@ extension CalculatorBrain: Printable {
 
   private func unaryOpDescription(opSymbol: String, _ remainingOps: ArraySlice<Op>) -> (String, ArraySlice<Op>) {
     let operand = nextExpression(remainingOps)
-    return (opSymbol + "(" + removeOutsideParen(operand.symbol) + ")", operand.remainingOps)
+    return (opSymbol + "(" + removeOutsideParen(operand.expression) + ")", operand.remaining)
   }
 
   private func binaryOpDescription(opSymbol: String, _ remainingOps: ArraySlice<Op>) -> (String, ArraySlice<Op>) {
     let operand1 = nextExpression(remainingOps)
-    let operand2 = nextExpression(operand1.remainingOps)
-    return ("(" + operand2.symbol + opSymbol + operand1.symbol + ")", operand2.remainingOps)
+    let operand2 = nextExpression(operand1.remaining)
+    return ("(" + operand2.expression + opSymbol + operand1.expression + ")", operand2.remaining)
   }
 
 }
