@@ -20,7 +20,9 @@ class GraphViewController: UIViewController {
 
   var dataSource: GraphViewDataSource?
 
-  @IBOutlet weak var graphView: GraphView! { didSet { graphView.dataSource = dataSource } }
+  @IBOutlet weak var graphView: GraphView! {
+    didSet { graphView.dataSource = dataSource }
+  }
 
   private let defaults = NSUserDefaults.standardUserDefaults()
 
@@ -32,7 +34,8 @@ class GraphViewController: UIViewController {
     }
     set {
       graphView.pointsPerUnit = newValue
-      defaults.setObject(graphView.pointsPerUnit, forKey: Constants.PointsPerUnitKey)
+      defaults.setObject(graphView.pointsPerUnit,
+        forKey: Constants.PointsPerUnitKey)
     }
   }
 
@@ -40,7 +43,8 @@ class GraphViewController: UIViewController {
     get {
       let x = defaults.objectForKey(Constants.OriginXKey) as? CGFloat
       let y = defaults.objectForKey(Constants.OriginYKey) as? CGFloat
-      graphView.origin = x.map { x in y.map { y in CGPoint(x: x, y: y) } } ?? graphView.origin
+      graphView.origin = x.map { x in y.map { y in CGPoint(x: x, y: y) } }
+        ?? graphView.origin
       return graphView.origin
     }
     set {

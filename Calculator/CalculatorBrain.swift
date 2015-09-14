@@ -161,7 +161,9 @@ final class CalculatorBrain {
 extension CalculatorBrain: CustomStringConvertible {
 
   var description: String {
-    return opStack.isEmpty ? "" : expressions(ArraySlice(opStack)).joinWithSeparator(", ")
+    return opStack.isEmpty
+      ? ""
+      : expressions(ArraySlice(opStack)).joinWithSeparator(", ")
   }
 
   private func expressions(remainingOps: ArraySlice<Op>) -> [String] {

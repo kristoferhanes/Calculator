@@ -38,7 +38,8 @@ class GraphView: UIView {
     axesDrawer.contentScaleFactor = contentScaleFactor
     axesDrawer.color = color
     axesDrawer.highQuality = precision <= 1
-    axesDrawer.drawAxesInRect(rect, origin: origin!, pointsPerUnit: pointsPerUnit)
+    axesDrawer.drawAxesInRect(rect, origin: origin!,
+      pointsPerUnit: pointsPerUnit)
     drawGraph(rect)
   }
 
@@ -50,7 +51,8 @@ class GraphView: UIView {
     dataSource?.startProviding()
     strokePathWithColor(color) { path in
       for x in rect.minX.stride(through: rect.maxX, by: self.precision) {
-        let point = yForX(x, origin: origin, pointPerUnit: pointsPerUnit, dataSource: dataSource).map { y in CGPoint(x: x, y: y) }
+        let point = yForX(x, origin: origin, pointPerUnit: pointsPerUnit,
+          dataSource: dataSource).map { y in CGPoint(x: x, y: y) }
         drawing = drawPoint(path, point: point, drawing: drawing)
       }
     }
@@ -59,22 +61,32 @@ class GraphView: UIView {
 
 }
 
-private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat, dataSource: GraphViewDataSource?) -> CGFloat? {
-  return dataSource?.yForX(viewToReal(x, origin: origin.x, pointsPerUnit: pointPerUnit)).map { y in realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
+private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat,
+  dataSource: GraphViewDataSource?) -> CGFloat? {
+
+    return dataSource?.yForX(viewToReal(x, origin: origin.x,
+      pointsPerUnit: pointPerUnit)).map { y in
+        realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
 }
 
-private func viewToReal(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGFloat) -> CGFloat {
-  return (coordinate - origin) / pointsPerUnit
+private func viewToReal(coordinate: CGFloat, origin: CGFloat,
+  pointsPerUnit: CGFloat) -> CGFloat {
+
+    return (coordinate - origin) / pointsPerUnit
 }
 
-private func realToView(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGFloat) -> CGFloat {
-  return coordinate * pointsPerUnit + origin
+private func realToView(coordinate: CGFloat, origin: CGFloat,
+  pointsPerUnit: CGFloat) -> CGFloat {
+
+    return coordinate * pointsPerUnit + origin
 }
 
-private func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {
-  guard point != nil else { return false }
-  lineTo(path, point: point!, drawing: drawing)
-  return true
+private func drawPoint(path: UIBezierPath, point: CGPoint?,
+  drawing: Bool) -> Bool {
+
+    guard point != nil else { return false }
+    lineTo(path, point: point!, drawing: drawing)
+    return true
 }
 
 private func lineTo(path: UIBezierPath, point: CGPoint, drawing: Bool) {
