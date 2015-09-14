@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol GraphViewDataSource {
+protocol GraphViewDataSource: class {
   func yForX(x: CGFloat) -> CGFloat?
   func startProviding()
   func stopProviding()
@@ -24,7 +24,7 @@ class GraphView: UIView {
   var pointsPerUnit: CGFloat = 1 { didSet { setNeedsDisplay() } }
 
   private let axesDrawer = AxesDrawer()
-  var dataSource: GraphViewDataSource? { didSet { setNeedsDisplay() } }
+  weak var dataSource: GraphViewDataSource? { didSet { setNeedsDisplay() } }
   var origin: CGPoint? { didSet { setNeedsDisplay() } }
   var precision: CGFloat = 1 {
     didSet {
@@ -42,18 +42,16 @@ class GraphView: UIView {
     drawGraph(rect)
   }
 
-  private func drawGraph(rect: CGRect) {
+  final private func drawGraph(rect: CGRect) {
     var drawing = false
-    let precision = self.precision
     let origin = self.origin ?? CGPoint(x: bounds.midX, y: bounds.midY)
     let pointsPerUnit = self.pointsPerUnit
     let dataSource = self.dataSource
-    let maxX = rect.maxX + precision
     dataSource?.startProviding()
     strokePathWithColor(color) { path in
-      for var x = rect.minX; x < maxX; x += precision {
-        let point = flatMap(yForX(x, origin, pointsPerUnit, dataSource)) { y in CGPoint(x: x, y: y) }
-        drawing = drawPoint(path, point, drawing)
+      for x in rect.minX.stride(through: rect.maxX, by: self.precision) {
+        let point = yForX(x, origin: origin, pointPerUnit: pointsPerUnit, dataSource: dataSource).map { y in CGPoint(x: x, y: y) }
+        drawing = drawPoint(path, point: point, drawing: drawing)
       }
     }
     dataSource?.stopProviding()
@@ -62,7 +60,7 @@ class GraphView: UIView {
 }
 
 private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat, dataSource: GraphViewDataSource?) -> CGFloat? {
-  return flatMap(dataSource?.yForX(viewToReal(x, origin.x, pointPerUnit))) { y in realToView(-y, origin.y, pointPerUnit) }
+  return dataSource?.yForX(viewToReal(x, origin: origin.x, pointsPerUnit: pointPerUnit)).map { y in realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
 }
 
 private func viewToReal(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGFloat) -> CGFloat {
@@ -75,7 +73,7 @@ private func realToView(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGF
 
 private func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {
   if point == nil { return false }
-  lineTo(path, point!, drawing)
+  lineTo(path, point: point!, drawing: drawing)
   return true
 }
 

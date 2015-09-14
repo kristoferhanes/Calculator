@@ -16,8 +16,8 @@ class MasterFirstSplitViewController: UISplitViewController, UISplitViewControll
   }
 
   func splitViewController(splitViewController: UISplitViewController,
-    collapseSecondaryViewController: UIViewController!,
-    ontoPrimaryViewController: UIViewController!) -> Bool {
+    collapseSecondaryViewController: UIViewController,
+    ontoPrimaryViewController: UIViewController) -> Bool {
     return true
   }
 

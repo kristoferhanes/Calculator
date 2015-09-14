@@ -13,22 +13,24 @@ class CalculatorViewController: UIViewController {
   private struct Constants {
     static let SetMemoryButtonTitle = "→M"
     static let MemoryVariableName = "M"
-    static let ShowGraphSegueID = "ShowGraph"
     static let CalculatorProgramKey = "CalculatorViewController.brain.program"
+  }
+
+  private enum SegueIdentifier: String {
+    case ShowGraph = "ShowGraph"
   }
 
   @IBOutlet weak var display: UILabel!
 
   @IBOutlet weak var historyDisplay: UILabel!
   private var userIsTyping = false
-  private var brain = CalculatorBrain()
-  private var oldVariableValues: CalculatorBrain.VariableValuesType?
+  private let brain = CalculatorBrain()
+  private var oldVariableValues: CalculatorBrain.VariablesType?
 
   @IBAction func appendDigit(sender: UIButton) {
-    let digit = sender.currentTitle ?? ""
-    if userIsTyping {
-      appendToDisplay(digit)
-    } else {
+    guard let digit = sender.currentTitle else { return }
+    if userIsTyping { appendToDisplay(digit) }
+    else {
       display.text = digit
       userIsTyping = true
     }
@@ -38,7 +40,9 @@ class CalculatorViewController: UIViewController {
     super.viewDidLoad()
     brain.program = readCalculatorProgramFromDefaults() ?? []
     bindModelToView()
-    configGraphViewController(graphViewControllerFrom(splitViewController?.viewControllers[1]))
+    _ = (splitViewController?.viewControllers[1])
+      .flatMap(graphViewController)
+      .map(configGraphViewController)
   }
 
   private let defaults = NSUserDefaults.standardUserDefaults()
@@ -52,8 +56,8 @@ class CalculatorViewController: UIViewController {
   }
 
   private func appendToDisplay(s: String) {
-    if s != "." || !contains(display.text ?? "", ".") {
-      display.text = flatMap(display.text) { x in x + s }
+    if s != "." || !(display.text ?? "").characters.contains(".") {
+      display.text = display.text.map { $0 + s }
     }
   }
 
@@ -80,37 +84,38 @@ class CalculatorViewController: UIViewController {
 
   @IBAction func operate(sender: UIButton) {
     if userIsTyping { enter() }
-    if let op = sender.currentTitle {
-      brain.performOperation(op)
-    }
+    _ = sender.currentTitle.map { brain.performOperation($0) }
     saveToDefaults(brain.program)
     bindModelToView()
   }
 
   @IBAction func enter() {
     userIsTyping = false
-    if let dv = displayValue {
-      brain.pushOperand(dv)
-    }
+    _ = displayValue.map { brain.pushOperand($0) }
     saveToDefaults(brain.program)
     bindModelToView()
   }
 
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    if segue.identifier == Constants.ShowGraphSegueID {
-      configGraphViewController(graphViewControllerFrom(segue.destinationViewController))
-    }
+    if let id = (segue.identifier.flatMap { SegueIdentifier(rawValue: $0) }) {
+      switch id {
+      case .ShowGraph:
+        _ = graphViewController(segue.destinationViewController)
+          .map(configGraphViewController)
+      }
+      segue.destinationViewController
+    } else { fatalError("Invalid segue indentifier \(segue.identifier).") }
   }
 
-  private func graphViewControllerFrom(someObject: AnyObject?) -> GraphViewController? {
+  private func graphViewController(someObject: AnyObject) -> GraphViewController? {
     let vc = someObject as? UIViewController
     let vvc = (vc as? UINavigationController)?.visibleViewController
     return vvc as? GraphViewController ?? vc as? GraphViewController
   }
 
-  private func configGraphViewController(gvc: GraphViewController?) {
-    gvc?.dataSource = self
-    gvc?.title = lastExpression(brain.description)
+  private func configGraphViewController(gvc: GraphViewController) {
+    gvc.dataSource = self
+    gvc.title = lastExpression(brain.description)
   }
 
   private func bindModelToView() {
@@ -121,23 +126,20 @@ class CalculatorViewController: UIViewController {
   }
 
   private var displayValue: Double? {
-    get { return flatMap(display.text) { x in doubleFromString(x) } }
+    get { return display.text.flatMap { Double(string: $0) } }
     set {
-      if let nv = newValue {
-        display.text = removeDecimalZeroFrom("\(nv)")
-      } else {
-        display.text = " "
-      }
+      if let nv = newValue { display.text = "\(nv)".removeDecimalZero() }
+      else { display.text = " " }
     }
   }
 
 }
 
-extension CalculatorViewController: GraphViewControllerDataSource {
+extension CalculatorViewController: GraphViewDataSource {
 
   func yForX(x: CGFloat) -> CGFloat? {
     brain.variableValues[Constants.MemoryVariableName] = Double(x)
-    return flatMap(brain.evaluate()) { x in CGFloat(x) }
+    return brain.evaluate().map { CGFloat($0) }
   }
 
   func startProviding() {
@@ -145,9 +147,7 @@ extension CalculatorViewController: GraphViewControllerDataSource {
   }
 
   func stopProviding() {
-    if oldVariableValues != nil {
-      brain.variableValues = oldVariableValues!
-    }
+    if oldVariableValues != nil { brain.variableValues = oldVariableValues! }
   }
 
 }
@@ -158,5 +158,6 @@ private func lastExpression(expressionsString: String) -> String {
 }
 
 private func removeSurroundingWhitespace(s: String) -> String {
-  return s.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+  let charSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
+  return s.stringByTrimmingCharactersInSet(charSet)
 }

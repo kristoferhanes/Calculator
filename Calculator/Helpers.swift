@@ -8,17 +8,26 @@
 
 import Foundation
 
-func flatMap<X,Y,Z>(x: X?, y: Y?, f: (X,Y)->Z?) -> Z? {
-  return flatMap(x) { x in flatMap(y) { y in f(x, y) } }
+func zip<T,U>(x: T?, _ y: U?) -> (T,U)? {
+  return x.flatMap { x in y.map { y in (x, y) } }
 }
 
-func doubleFromString(s: String) -> Double? {
-  return NSNumberFormatter().numberFromString(s)?.doubleValue
+extension String {
+
+  func removeDecimalZero() -> String {
+    if self.characters.count < 2 { return self }
+    let end = startIndex.advancedBy(self.characters.count-2)
+    return substringFromIndex(end) == ".0" ? self[startIndex..<end] : self
+  }
+
 }
 
-func removeDecimalZeroFrom(s: String) -> String {
-  if count(s) < 2 { return s }
-  let end = advance(s.startIndex, count(s)-2)
-  return s.substringFromIndex(end) == ".0" ? s[s.startIndex..<end] : s
-}
+extension Double {
 
+  init?(string: String) {
+    let value = NSNumberFormatter().numberFromString(string)?.doubleValue
+    if value == nil { return nil }
+    self.init(value!)
+  }
+  
+}
