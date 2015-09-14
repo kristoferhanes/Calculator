@@ -72,7 +72,7 @@ private func realToView(coordinate: CGFloat, origin: CGFloat, pointsPerUnit: CGF
 }
 
 private func drawPoint(path: UIBezierPath, point: CGPoint?, drawing: Bool) -> Bool {
-  if point == nil { return false }
+  guard point != nil else { return false }
   lineTo(path, point: point!, drawing: drawing)
   return true
 }

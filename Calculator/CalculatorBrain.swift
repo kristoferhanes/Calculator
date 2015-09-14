@@ -69,29 +69,31 @@ final class CalculatorBrain {
       return result
     }
     set {
-      let newProgram = newValue as? [String:AnyObject]
-      if let newVariableValues = variableValuesFrom(newProgram),
-        newOpStack = opStackFrom(newProgram) {
-          variableValues = newVariableValues
-          opStack = newOpStack
-      } else {
-        print("failed to parse program")
+      guard
+        let newProgram = newValue as? [String:AnyObject],
+        let newVariableValues = variableValuesFrom(newProgram),
+        let newOpStack = opStackFrom(newProgram)
+        else {
+          print("failed to parse program")
+          return
       }
+      variableValues = newVariableValues
+      opStack = newOpStack
     }
   }
 
-  private func variableValuesFrom(program: [String:AnyObject]?) -> VariablesType? {
-    return program?[Constants.VariableValuesProgramKey] as? VariablesType
+  private func variableValuesFrom(program: [String:AnyObject]) -> VariablesType? {
+    return program[Constants.VariableValuesProgramKey] as? VariablesType
   }
 
-  private func opStackFrom(program: [String:AnyObject]?) -> [Op]? {
-    let newOps = program?[Constants.OpStackProgramKey] as? [String]
+  private func opStackFrom(program: [String:AnyObject]) -> [Op]? {
+    let newOps = program[Constants.OpStackProgramKey] as? [String]
     return newOps?.map {
       self.knownOps[$0] ?? self.operandFromString($0) ?? Op.Variable($0) }
   }
 
   private func operandFromString(s: String) -> Op? {
-    return Double(string: s).map { Op.Operand($0) }
+    return Double(s).map { Op.Operand($0) }
   }
 
   private func evaluate(remainingOps: ArraySlice<Op>) ->

@@ -126,7 +126,7 @@ class CalculatorViewController: UIViewController {
   }
 
   private var displayValue: Double? {
-    get { return display.text.flatMap { Double(string: $0) } }
+    get { return display.text.flatMap { Double($0) } }
     set {
       if let nv = newValue { display.text = "\(nv)".removeDecimalZero() }
       else { display.text = " " }
@@ -147,7 +147,8 @@ extension CalculatorViewController: GraphViewDataSource {
   }
 
   func stopProviding() {
-    if oldVariableValues != nil { brain.variableValues = oldVariableValues! }
+    guard let ovv = oldVariableValues else { return }
+    brain.variableValues = ovv
   }
 
 }
