@@ -14,7 +14,6 @@ protocol GraphViewDataSource: class {
   func stopProviding()
 }
 
-@IBDesignable
 class GraphView: UIView {
 
   @IBInspectable
