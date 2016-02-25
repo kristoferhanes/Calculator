@@ -25,58 +25,81 @@ extension Expr {
 
     func parse(input: String) -> (expr: Expr, rest: String)? {
       guard let (first, rest) = decompose(input) else { return nil }
+
       switch first {
       case "(":
-        guard
-          let (e1, rest1) = parse(rest),
-          let (op, rest2) = decompose(rest1),
-          let (e2, rest3) = parse(rest2)
-          else { return nil }
-
-        let restFinal = decompose(rest3)?.tail ?? ""
-        switch op {
-        case "+": return (.Add(e1, e2), restFinal)
-        case "−": return (.Sub(e1, e2), restFinal)
-        case "×": return (.Mul(e1, e2), restFinal)
-        case "÷": return (.Div(e1, e2), restFinal)
-        default: return nil
-        }
+        guard let (e, rest1) = parseBinaryOperator(rest) ?? parseDouble(rest)
+          else { fallthrough }
+        let restFinal = rest1.characters.first == ")" ? decompose(rest1)?.tail ?? "" : rest1
+        return (e, restFinal)
 
       case "0"..."9", "-":
-        let (succeeds, remainder) = takeWhile(rest, predicate: isNumeral)
-        return (.Num(Double("\(first)" + succeeds)!), remainder)
+        guard let result = parseDouble(input) else { fallthrough }
+        return result
+
+      case "√":
+        guard let result = parseUnitaryOperator("", from: rest, with: Expr.Sqrt)
+          else { fallthrough }
+        return result
 
       case "s":
-        guard
-          let (second, rest1) = decompose(rest) where second == "i",
-          let (third, rest2) = decompose(rest1) where third == "n",
-          let rest3 = decompose(rest2)?.tail
+        guard let result = parseUnitaryOperator("in", from: rest, with: Expr.Sin)
           else { fallthrough }
-        guard let (e, rest4) = parse(rest3) else { return nil }
-        let restFinal = decompose(rest4)?.tail ?? ""
-        return (.Sin(e), restFinal)
+        return result
 
       case "c":
-        guard
-          let (second, rest1) = decompose(rest) where second == "o",
-          let (third, rest2) = decompose(rest1) where third == "s",
-          let rest3 = decompose(rest2)?.tail
+        guard let result = parseUnitaryOperator("os", from: rest, with: Expr.Cos)
           else { fallthrough }
-        guard let (e, rest4) = parse(rest3) else { return nil }
-        let restFinal = decompose(rest4)?.tail ?? ""
-        return (.Cos(e), restFinal)
+        return result
 
       case "a"..."z", "A"..."Z":
         let (succeeds, remainder) = takeWhile(rest, predicate: isAlpha)
         return (.Var(String("\(first)" + succeeds)), remainder)
+
 
       default: return nil
 
       }
     }
 
+    func parseDouble(input: String) -> (expr: Expr, rest: String)? {
+      guard let (first, rest) = decompose(input) else { return nil }
+      switch first {
+      case "0"..."9", "-", ".":
+        let (succeeds, remainder) = takeWhile(rest, predicate: isNumeral)
+        return (.Num(Double("\(first)" + succeeds)!), remainder)
+      default: return nil
+      }
+    }
+
+    func parseBinaryOperator(input: String) -> (expr: Expr, rest: String)? {
+      guard
+        let (e1, rest) = parse(input),
+        let (op, rest1) = decompose(rest),
+        let (e2, restFinal) = parse(rest1)
+        else { return nil }
+
+      switch op {
+      case "+": return (.Add(e1, e2), restFinal)
+      case "−": return (.Sub(e1, e2), restFinal)
+      case "×": return (.Mul(e1, e2), restFinal)
+      case "÷": return (.Div(e1, e2), restFinal)
+      default: return nil
+      }
+    }
+
+    func parseUnitaryOperator(opStr: String, from input: String,
+      with expr: Expr->Expr) -> (expr: Expr, rest: String)? {
+        guard
+          let rest = dropPrefix(opStr, from: input),
+          let (e, rest1) = parse(rest)
+          else { return nil }
+        let restFinal = decompose(rest1)?.tail ?? ""
+        return (expr(e), restFinal)
+    }
+
     func isNumeral(c: Character) -> Bool {
-      return "0"..."9" ~= c
+      return "0"..."9" ~= c || "." == c
     }
 
     func isAlpha(c: Character) -> Bool {
@@ -93,6 +116,12 @@ extension Expr {
       }
 
       return (taken, remaining)
+    }
+
+    func dropPrefix(drop: String, from str: String) -> String? {
+      let dropCount = str.characters.count - drop.characters.count
+      guard drop == String(str.characters.dropLast(dropCount)) else { return nil }
+      return String(str.characters.dropFirst(drop.characters.count))
     }
 
     func decompose(str: String) -> (head: Character, tail: String)? {
