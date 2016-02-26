@@ -25,40 +25,35 @@ extension Expr {
 
     func parse(input: String) -> (expr: Expr, rest: String)? {
       guard let (first, rest) = decompose(input) else { return nil }
+      if first == "(" {
+        guard
+          let (e1, rest1) = parse(rest),
+          let (closeParen, restFinal) = decompose(rest1) where closeParen == ")"
+          else { return nil }
+        return (e1, restFinal)
+      } else {
+        guard let (e1, rest1) = parseDouble(input)
+          ?? parseUnitaryOperator("√", from: input, with: Expr.Sqrt)
+          ?? parseUnitaryOperator("sin", from: input, with: Expr.Sin)
+          ?? parseUnitaryOperator("cos", from: input, with: Expr.Cos)
+          ?? parseVariable(input)
+          else { return nil }
+        let (e2, restFinal) = parseBinaryOperatorWithLeftExpr(e1, remaining: rest1) ?? (e1, rest1)
+        return (e2, restFinal)
+      }
+    }
 
-      switch first {
-      case "(":
-        guard let (e, rest1) = parseBinaryOperator(rest) ?? parseDouble(rest)
-          else { fallthrough }
-        let restFinal = rest1.characters.first == ")" ? decompose(rest1)?.tail ?? "" : rest1
-        return (e, restFinal)
-
-      case "0"..."9", "-":
-        guard let result = parseDouble(input) else { fallthrough }
-        return result
-
-      case "√":
-        guard let result = parseUnitaryOperator("", from: rest, with: Expr.Sqrt)
-          else { fallthrough }
-        return result
-
-      case "s":
-        guard let result = parseUnitaryOperator("in", from: rest, with: Expr.Sin)
-          else { fallthrough }
-        return result
-
-      case "c":
-        guard let result = parseUnitaryOperator("os", from: rest, with: Expr.Cos)
-          else { fallthrough }
-        return result
-
-      case "a"..."z", "A"..."Z":
-        let (succeeds, remainder) = takeWhile(rest, predicate: isAlpha)
-        return (.Var(String("\(first)" + succeeds)), remainder)
-
-
+    func parseBinaryOperatorWithLeftExpr(left: Expr, remaining: String) -> (expr: Expr, rest: String)? {
+      guard
+        let (op, rest) = decompose(remaining),
+        let (right, restFinal) = parse(rest)
+        else { return nil }
+      switch op {
+      case "+": return (.Add(left, right), restFinal)
+      case "−": return (.Sub(left, right), restFinal)
+      case "×": return (.Mul(left, right), restFinal)
+      case "÷": return (.Div(left, right), restFinal)
       default: return nil
-
       }
     }
 
@@ -70,6 +65,13 @@ extension Expr {
         return (.Num(Double("\(first)" + succeeds)!), remainder)
       default: return nil
       }
+    }
+
+    func parseVariable(input: String) -> (expr: Expr, rest: String)? {
+      guard let first = decompose(input)?.head where isAlpha(first)
+        else { return nil }
+      let (succeeds, remainder) = takeWhile(input, predicate: isAlpha)
+      return (.Var(succeeds), remainder)
     }
 
     func parseBinaryOperator(input: String) -> (expr: Expr, rest: String)? {
@@ -91,10 +93,10 @@ extension Expr {
     func parseUnitaryOperator(opStr: String, from input: String,
       with expr: Expr->Expr) -> (expr: Expr, rest: String)? {
         guard
+          input.hasPrefix(opStr),
           let rest = dropPrefix(opStr, from: input),
-          let (e, rest1) = parse(rest)
+          let (e, restFinal) = parse(rest)
           else { return nil }
-        let restFinal = decompose(rest1)?.tail ?? ""
         return (expr(e), restFinal)
     }
 
@@ -130,7 +132,8 @@ extension Expr {
       return (first, rest)
     }
 
-    guard let expr = parse(input)?.expr else { return nil }
+    guard let (expr, remaining) = parse(input) where remaining == ""
+      else { return nil }
     self = expr
   }
 }

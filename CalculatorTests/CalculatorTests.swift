@@ -21,8 +21,10 @@ class CalculatorTests: XCTestCase {
     XCTAssertEqual(Expr(parse: "(1÷2)"), .Div(.Num(1.0), .Num(2.0)))
     XCTAssertEqual(Expr(parse: "sin(23+2)"), .Sin(.Add(.Num(23.0), .Num(2.0))))
     XCTAssertEqual(Expr(parse: "cos(34)"), .Cos(.Num(34.0)))
-    XCTAssertEqual(Expr(parse: "√(5+45)"), .Sqrt(.Add(.Num(5.0), .Num(45.0))))
+    XCTAssertEqual(Expr(parse: "(√(5+45))"), .Sqrt(.Add(.Num(5.0), .Num(45.0))))
     XCTAssertEqual(Expr(parse: "(x+3)"), .Add(.Var("x"), .Num(3.0)))
+    XCTAssertEqual(Expr(parse: "x"), .Var("x"))
+    XCTAssertEqual(Expr(parse: "(x)"), .Var("x"))
   }
 
 }
