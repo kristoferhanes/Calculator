@@ -27,4 +27,8 @@ class CalculatorTests: XCTestCase {
     XCTAssertEqual(Expr(parse: "(x)"), .Var("x"))
   }
 
+  func testOrderOfOperations() {
+    XCTAssertEqual(Expr(parse: "1+2*3"), .Add(.Num(1), .Mul(.Num(2), .Num(3))))
+  }
+
 }

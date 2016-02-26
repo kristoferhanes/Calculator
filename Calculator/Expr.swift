@@ -48,12 +48,23 @@ extension Expr {
         let (op, rest) = decompose(remaining),
         let (right, restFinal) = parse(rest)
         else { return nil }
+
+      // TODO: Add support for operator precidence.
+
       switch op {
       case "+": return (.Add(left, right), restFinal)
       case "−": return (.Sub(left, right), restFinal)
       case "×": return (.Mul(left, right), restFinal)
       case "÷": return (.Div(left, right), restFinal)
       default: return nil
+      }
+    }
+
+    func correctPrecidence(left left: Expr, right: Expr, operation: (Expr,Expr)->Expr) -> Expr {
+      switch right {
+      case let .Mul(e1, e2): return .Mul(operation(left, e1), e2)
+      case let .Div(e1, e2): return .Div(operation(left, e1), e2)
+      default: return operation(left, right)
       }
     }
 
