@@ -21,6 +21,7 @@ indirect enum Expr {
 }
 
 extension Expr {
+
   init?(parse input: String) {
 
     func parse(input: String) -> (expr: Expr, rest: String)? {
@@ -91,7 +92,7 @@ extension Expr {
       guard let (first, rest) = decompose(input) else { return nil }
       switch first {
       case "0"..."9", "-", ".":
-        let (succeeds, remainder) = takeWhile(rest, predicate: isNumeral)
+        let (succeeds, remainder) = splitWhile(rest, predicate: isNumeral)
         return (.Num(Double("\(first)" + succeeds)!), remainder)
       default: return nil
       }
@@ -100,7 +101,7 @@ extension Expr {
     func parseVariable(input: String) -> (expr: Expr, rest: String)? {
       guard let first = decompose(input)?.head where isAlpha(first)
         else { return nil }
-      let (succeeds, remainder) = takeWhile(input, predicate: isAlpha)
+      let (succeeds, remainder) = splitWhile(input, predicate: isAlpha)
       return (.Var(succeeds), remainder)
     }
 
@@ -138,7 +139,7 @@ extension Expr {
       return "a"..."z" ~= c || "A"..."Z" ~= c
     }
 
-    func takeWhile(str: String, predicate: Character->Bool) -> (String, String) {
+    func splitWhile(str: String, predicate: Character->Bool) -> (String, String) {
       var taken = ""
       var remaining = str
 
@@ -166,6 +167,34 @@ extension Expr {
       else { return nil }
     self = expr
   }
+
+  func valueWith(env: [String:Double]) -> Double? {
+
+    func combine(e1: Expr, _ e2: Expr, with op: (Double, Double)->Double) -> Double? {
+      guard
+        let n1 = e1.valueWith(env),
+        let n2 = e2.valueWith(env)
+        else { return nil }
+      return op(n1, n2)
+    }
+
+    switch self {
+    case let .Num(n): return n
+    case let .Var(s): return env[s]
+    case let .Add(e1, e2): return combine(e1, e2, with: +)
+    case let .Sub(e1, e2): return combine(e1, e2, with: -)
+    case let .Mul(e1, e2): return combine(e1, e2, with: *)
+    case let .Div(e1, e2): return combine(e1, e2, with: /)
+    case let .Sqrt(e): return e.valueWith(env).map(sqrt)
+    case let .Sin(e): return e.valueWith(env).map(sin)
+    case let .Cos(e): return e.valueWith(env).map(cos)
+    }
+  }
+
+  var value: Double? {
+    return valueWith([:])
+  }
+
 }
 
 extension Expr: Equatable {  }
