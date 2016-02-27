@@ -49,21 +49,40 @@ extension Expr {
         let (right, restFinal) = parse(rest)
         else { return nil }
 
-      // TODO: Add support for operator precidence.
-
       switch op {
-      case "+": return (.Add(left, right), restFinal)
-      case "−": return (.Sub(left, right), restFinal)
-      case "×": return (.Mul(left, right), restFinal)
-      case "÷": return (.Div(left, right), restFinal)
+      case "+": return (rotateOperation(.Add(left, right)), restFinal)
+      case "−": return (rotateOperation(.Sub(left, right)), restFinal)
+      case "×":
+        let operation = correctPrecidence(left: left, right: right, operation: Expr.Mul)
+        return (rotateOperation(operation), restFinal)
+      case "÷":
+        let operation = correctPrecidence(left: left, right: right, operation: Expr.Div)
+        return (rotateOperation(operation), restFinal)
       default: return nil
+      }
+    }
+
+    func rotateOperation(expr: Expr) -> Expr {
+      switch expr {
+
+      case let .Add(e1, .Add(e2, e3)): return .Add(.Add(e1, e2), e3)
+      case let .Add(e1, .Sub(e2, e3)): return .Sub(.Add(e1, e2), e3)
+      case let .Sub(e1, .Add(e2, e3)): return .Add(.Sub(e1, e2), e3)
+      case let .Sub(e1, .Sub(e2, e3)): return .Sub(.Sub(e1, e2), e3)
+
+      case let .Mul(e1, .Mul(e2, e3)): return .Mul(.Mul(e1, e2), e3)
+      case let .Mul(e1, .Div(e2, e3)): return .Div(.Mul(e1, e2), e3)
+      case let .Div(e1, .Mul(e2, e3)): return .Mul(.Div(e1, e2), e3)
+      case let .Div(e1, .Div(e2, e3)): return .Div(.Div(e1, e2), e3)
+
+      default: return expr
       }
     }
 
     func correctPrecidence(left left: Expr, right: Expr, operation: (Expr,Expr)->Expr) -> Expr {
       switch right {
-      case let .Mul(e1, e2): return .Mul(operation(left, e1), e2)
-      case let .Div(e1, e2): return .Div(operation(left, e1), e2)
+      case let .Add(e1, e2): return .Add(operation(left, e1), e2)
+      case let .Sub(e1, e2): return .Sub(operation(left, e1), e2)
       default: return operation(left, right)
       }
     }

@@ -28,7 +28,18 @@ class CalculatorTests: XCTestCase {
   }
 
   func testOrderOfOperations() {
-    XCTAssertEqual(Expr(parse: "1+2*3"), .Add(.Num(1), .Mul(.Num(2), .Num(3))))
+    XCTAssertEqual(Expr(parse: "1+2×3"), .Add(.Num(1), .Mul(.Num(2), .Num(3))))
+    XCTAssertEqual(Expr(parse: "1+2÷3"), .Add(.Num(1), .Div(.Num(2), .Num(3))))
+    XCTAssertEqual(Expr(parse: "1×2+3"), .Add(.Mul(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1+2+3"), .Add(.Add(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1+2−3"), .Sub(.Add(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1−2−3"), .Sub(.Sub(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1−2+3"), .Add(.Sub(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1×2×3"), .Mul(.Mul(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1÷2÷3"), .Div(.Div(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expr(parse: "1+2×3+2"), .Add(.Add(.Num(1), .Mul(.Num(2), .Num(3))), .Num(2)))
   }
 
 }
+
+
