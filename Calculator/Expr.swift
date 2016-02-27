@@ -39,12 +39,12 @@ extension Expr {
           ?? parseUnitaryOperator("cos", from: input, with: Expr.Cos)
           ?? parseVariable(input)
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperatorWithLeftExpr(e1, remaining: rest1) ?? (e1, rest1)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1) ?? (e1, rest1)
         return (e2, restFinal)
       }
     }
 
-    func parseBinaryOperatorWithLeftExpr(left: Expr, remaining: String) -> (expr: Expr, rest: String)? {
+    func parseBinaryOperator(left left: Expr, remaining: String) -> (expr: Expr, rest: String)? {
       guard
         let (op, rest) = decompose(remaining),
         let (right, restFinal) = parse(rest)
@@ -103,22 +103,6 @@ extension Expr {
         else { return nil }
       let (succeeds, remainder) = splitWhile(input, predicate: isAlpha)
       return (.Var(succeeds), remainder)
-    }
-
-    func parseBinaryOperator(input: String) -> (expr: Expr, rest: String)? {
-      guard
-        let (e1, rest) = parse(input),
-        let (op, rest1) = decompose(rest),
-        let (e2, restFinal) = parse(rest1)
-        else { return nil }
-
-      switch op {
-      case "+": return (.Add(e1, e2), restFinal)
-      case "−": return (.Sub(e1, e2), restFinal)
-      case "×": return (.Mul(e1, e2), restFinal)
-      case "÷": return (.Div(e1, e2), restFinal)
-      default: return nil
-      }
     }
 
     func parseUnitaryOperator(opStr: String, from input: String,
@@ -214,7 +198,34 @@ func == (lhs: Expr, rhs: Expr) -> Bool {
   }
 }
 
+extension Expr: CustomStringConvertible {
 
+  var description: String {
+
+    func toString(expr: Expr) -> String {
+      switch expr {
+      case let .Num(n): return "\(n)"
+      case let .Var(s): return s
+      case let .Add(e1, e2): return "(\(toString(e1))+\(toString(e2)))"
+      case let .Sub(e1, e2): return "(\(toString(e1))−\(toString(e2)))"
+      case let .Mul(e1, e2): return "(\(toString(e1))×\(toString(e2)))"
+      case let .Div(e1, e2): return "(\(toString(e1))÷\(toString(e2)))"
+      case let .Sqrt(e): return "sqrt(\(toString(e)))"
+      case let .Sin(e): return "sin(\(toString(e)))"
+      case let .Cos(e): return "cos(\(toString(e)))"
+      }
+    }
+
+    func removeOutsideParens(str: String) -> String {
+      guard str.characters.first == "(" && str.characters.last == ")"
+        else { return str }
+      return String(str.characters.dropFirst().dropLast())
+    }
+
+    return removeOutsideParens(toString(self))
+  }
+
+}
 
 
 
