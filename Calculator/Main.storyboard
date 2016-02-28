@@ -41,7 +41,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8e2-tX-gKB"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="G68-TN-Qff"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="C5F-4u-kFo" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -100,19 +100,17 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
-                                        <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rMG-Lt-ejz"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="2gy-bI-IY4" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
                                         <rect key="frame" x="8" y="8" width="102" height="58"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                        <state key="normal">
+                                        <state key="normal" title="⬅︎">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="clearAll" destination="BYZ-38-t0r" eventType="touchUpInside" id="hb6-Kr-9B7"/>
+                                            <action selector="delete" destination="BYZ-38-t0r" eventType="touchUpInside" id="uc3-nP-mgR"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="xTG-V9-Xgc" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -122,9 +120,6 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
-                                        <connections>
-                                            <action selector="clear" destination="BYZ-38-t0r" eventType="touchUpInside" id="wTw-Cw-isC"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="6u0-hS-hSL" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
                                         <rect key="frame" x="229" y="8" width="102" height="58"/>
@@ -142,6 +137,9 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="diz-F2-2nD"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="tnW-fA-Ad1" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
                                         <rect key="frame" x="450" y="8" width="102" height="58"/>
@@ -151,6 +149,9 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EL8-Qt-Dza"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="wKI-RG-a2q" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
                                         <rect key="frame" x="118" y="140" width="103" height="58"/>
@@ -161,7 +162,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XZ8-4J-hnv"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="g0Q-HL-i7S"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="KiF-T9-rzg" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -173,7 +174,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xS5-GR-2z2"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Q75-TM-3zK"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="G9f-Oa-G75" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -185,7 +186,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4wJ-ie-weF"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rvj-8k-kJK"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="jOp-GO-6FK" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -197,7 +198,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cYP-i2-w66"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7u1-V4-XhE"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="ubV-sI-kKE" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -209,7 +210,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vhg-wf-niJ"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SQe-Jg-ULG"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="VLj-VD-Up2" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -221,7 +222,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oJl-na-lvx"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Tib-p2-L7v"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="Clg-EV-5Wc" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -233,7 +234,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jjR-2Y-HhW"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qb8-jN-AUv"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="afs-Ge-0eX" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -245,7 +246,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5oA-U8-7sv"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Zgc-n2-hy7"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="iuv-6V-hfE" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -257,7 +258,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8oC-Bq-92k"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SAQ-xP-ysD"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="tIV-If-UAu" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -269,7 +270,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yir-b7-HIK"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="94o-lq-84G"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="ghv-xd-phC" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -281,7 +282,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XNI-28-WWS"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eNV-U3-KzX"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="elG-3I-eIP" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -293,7 +294,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cZr-fD-mBO"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Lmp-fT-Fv8"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="dGf-Lc-9Ms" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -305,7 +306,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dz0-cM-LgR"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="e5Z-mh-taT"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="sMo-83-1bD" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -317,7 +318,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uL2-Ho-hMm"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="VeE-cV-wvu"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="Kd0-di-rIk" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -329,7 +330,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="99w-mi-CeJ"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mo9-3Y-cZb"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="Myn-R6-e1i" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -341,7 +342,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Nw5-HQ-0Wa"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qPh-Zk-80h"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="oUB-Hk-54J" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -353,7 +354,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gWa-s8-8Cy"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="62j-us-McL"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="vH3-k4-ZrG" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -365,7 +366,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vrj-dt-JRH"/>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rj0-zi-RuF"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="s18-xn-rYa" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
@@ -377,7 +378,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="enter" destination="BYZ-38-t0r" eventType="touchUpInside" id="peU-YG-TeI"/>
+                                            <action selector="evalute" destination="BYZ-38-t0r" eventType="touchUpInside" id="5mh-7H-3Ok"/>
                                         </connections>
                                     </button>
                                 </subviews>

@@ -13,7 +13,8 @@ class CalculatorViewController: UIViewController {
   private struct Constants {
     static let SetMemoryButtonTitle = "→M"
     static let MemoryVariableName = "M"
-    static let CalculatorProgramKey = "CalculatorViewController.brain.program"
+    static let CalculatorExpressionKey = "CalculatorViewController.calculator.expression"
+    static let CalculatorVariablesKey = "CalculatorViewController.calculator.variables"
   }
 
   private enum SegueIdentifier: String {
@@ -22,80 +23,69 @@ class CalculatorViewController: UIViewController {
 
   @IBOutlet weak var displayLabel: RoundedLabel!
   @IBOutlet weak var historyDisplayLabel: RoundedLabel!
-  
-  private var userIsTyping = false
-  private let brain = CalculatorBrain()
+
   private var oldVariableValues: CalculatorBrain.VariablesType?
 
-  private var calculator = Calculator()
-
-  @IBAction func appendDigit(sender: UIButton) {
-    guard let digit = sender.currentTitle else { return }
-    if userIsTyping { appendToDisplay(digit) }
-    else {
-      displayLabel.text = digit
-      userIsTyping = true
+  private var calculator = Calculator() {
+    didSet {
+      bindModelToView()
     }
   }
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    brain.program = readCalculatorProgramFromDefaults() ?? []
-    bindModelToView()
-    _ = (splitViewController?.viewControllers[1])
-      .flatMap(graphViewController)
-      .map(configGraphViewController)
+    loadExpressionFromDefaults()
+    guard let vc = (splitViewController?.viewControllers[1]).flatMap(graphViewController)
+      else { return }
+    configGraphViewController(vc)
   }
 
   private let defaults = NSUserDefaults.standardUserDefaults()
 
-  private func readCalculatorProgramFromDefaults() -> CalculatorBrain.PropertyList? {
-    return defaults.objectForKey(Constants.CalculatorProgramKey)
-  }
-
-  private func saveToDefaults(program: CalculatorBrain.PropertyList) {
-    defaults.setObject(program, forKey: Constants.CalculatorProgramKey)
-  }
-
-  private func appendToDisplay(s: String) {
-    if s != "." || !(displayLabel.text ?? "").characters.contains(".") {
-      displayLabel.text = displayLabel.text.map { $0 + s }
+  private func loadExpressionFromDefaults() {
+    if let expression = defaults.objectForKey(Constants.CalculatorExpressionKey) as? String {
+      calculator.expression = expression
+    }
+    if let variables = defaults.objectForKey(Constants.CalculatorVariablesKey) as? [String:Double] {
+      calculator.variables = variables
     }
   }
 
+  private func saveCalculatorToDefaults() {
+    defaults.setObject(calculator.expression, forKey: Constants.CalculatorExpressionKey)
+    defaults.setObject(calculator.variables, forKey: Constants.CalculatorVariablesKey)
+  }
+
+  @IBAction func delete() {
+    guard let historyText = historyDisplayLabel.text else { return }
+    historyDisplayLabel.text = String(historyText.characters.dropLast())
+  }
+
+  @IBAction func appendCharacter(sender: UIButton) {
+    guard let title = sender.currentTitle else { return }
+    historyDisplayLabel.text = historyDisplayLabel.text.map { $0 + title }
+  }
+
   @IBAction func clear() {
-    brain.clear()
-    saveToDefaults(brain.program)
-    bindModelToView()
-    displayValue = 0
+    calculator.clear()
+    saveCalculatorToDefaults()
+    displayValue = nil
   }
 
   @IBAction func clearAll() {
-    brain.clearVariables()
+    calculator.clearAll()
     clear()
   }
 
   @IBAction func setVariable(sender: UIButton) {
     if sender.currentTitle == Constants.SetMemoryButtonTitle {
-      brain.variableValues[Constants.MemoryVariableName] = displayValue
-      userIsTyping = false
+      calculator.variables[Constants.MemoryVariableName] = displayValue
     }
-    saveToDefaults(brain.program)
-    bindModelToView()
+    saveCalculatorToDefaults()
   }
 
-  @IBAction func operate(sender: UIButton) {
-    if userIsTyping { enter() }
-    _ = sender.currentTitle.map { brain.performOperation($0) }
-    saveToDefaults(brain.program)
-    bindModelToView()
-  }
-
-  @IBAction func enter() {
-    userIsTyping = false
-    _ = displayValue.map { brain.pushOperand($0) }
-    saveToDefaults(brain.program)
-    bindModelToView()
+  @IBAction func evalute() {
+    displayValue = calculator.value
   }
 
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -114,33 +104,25 @@ class CalculatorViewController: UIViewController {
   }
 
   private func configGraphViewController(gvc: GraphViewController) {
-
-    func removeSurroundingWhitespace(s: String) -> String {
-      let whitespaceCharSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
-      return s.stringByTrimmingCharactersInSet(whitespaceCharSet)
-    }
-
-    func lastExpression(expressionsString: String) -> String {
-      let expressions = expressionsString.componentsSeparatedByString(",")
-      return expressions.last.map(removeSurroundingWhitespace) ?? ""
-    }
-
     gvc.dataSource = self
-    gvc.title = lastExpression(brain.description)
+    gvc.title = calculator.expression
   }
 
   private func bindModelToView() {
-    displayValue = brain.evaluate()
-    let description = brain.description
-    let suffix = description != "" ? "=" : " "
-    historyDisplayLabel.text = description + suffix
+    historyDisplayLabel.text = calculator.expression
+    displayValue = calculator.value
   }
 
   private var displayValue: Double? {
-    get { return displayLabel.text.flatMap { Double($0) } }
+    get {
+      return displayLabel.text.flatMap { Double($0) }
+    }
     set {
-      if let nv = newValue { displayLabel.text = "\(nv)".removeDecimalZero() }
-      else { displayLabel.text = " " }
+      if let nv = newValue {
+        displayLabel.text = "\(nv)".removeDecimalZero()
+      } else {
+        displayLabel.text = " "
+      }
     }
   }
 
@@ -149,17 +131,17 @@ class CalculatorViewController: UIViewController {
 extension CalculatorViewController: GraphViewDataSource {
 
   func yForX(x: CGFloat) -> CGFloat? {
-    brain.variableValues[Constants.MemoryVariableName] = Double(x)
-    return brain.evaluate().map { CGFloat($0) }
+    calculator.variables[Constants.MemoryVariableName] = Double(x)
+    return calculator.value.map(CGFloat.init)
   }
 
   func startProviding() {
-    oldVariableValues = brain.variableValues
+    oldVariableValues = calculator.variables
   }
 
   func stopProviding() {
     guard let ovv = oldVariableValues else { return }
-    brain.variableValues = ovv
+    calculator.variables = ovv
   }
-
+  
 }
