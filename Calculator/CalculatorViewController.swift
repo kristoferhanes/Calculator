@@ -20,9 +20,9 @@ class CalculatorViewController: UIViewController {
     case ShowGraph = "ShowGraph"
   }
 
-  @IBOutlet weak var display: UILabel!
-
-  @IBOutlet weak var historyDisplay: UILabel!
+  @IBOutlet weak var displayLabel: RoundedLabel!
+  @IBOutlet weak var historyDisplayLabel: RoundedLabel!
+  
   private var userIsTyping = false
   private let brain = CalculatorBrain()
   private var oldVariableValues: CalculatorBrain.VariablesType?
@@ -31,7 +31,7 @@ class CalculatorViewController: UIViewController {
     guard let digit = sender.currentTitle else { return }
     if userIsTyping { appendToDisplay(digit) }
     else {
-      display.text = digit
+      displayLabel.text = digit
       userIsTyping = true
     }
   }
@@ -56,8 +56,8 @@ class CalculatorViewController: UIViewController {
   }
 
   private func appendToDisplay(s: String) {
-    if s != "." || !(display.text ?? "").characters.contains(".") {
-      display.text = display.text.map { $0 + s }
+    if s != "." || !(displayLabel.text ?? "").characters.contains(".") {
+      displayLabel.text = displayLabel.text.map { $0 + s }
     }
   }
 
@@ -131,14 +131,14 @@ class CalculatorViewController: UIViewController {
     displayValue = brain.evaluate()
     let description = brain.description
     let suffix = description != "" ? "=" : " "
-    historyDisplay.text = description + suffix
+    historyDisplayLabel.text = description + suffix
   }
 
   private var displayValue: Double? {
-    get { return display.text.flatMap { Double($0) } }
+    get { return displayLabel.text.flatMap { Double($0) } }
     set {
-      if let nv = newValue { display.text = "\(nv)".removeDecimalZero() }
-      else { display.text = " " }
+      if let nv = newValue { displayLabel.text = "\(nv)".removeDecimalZero() }
+      else { displayLabel.text = " " }
     }
   }
 

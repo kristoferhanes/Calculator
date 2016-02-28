@@ -44,6 +44,10 @@ extension Calculator {
     }
   }
 
+  mutating func clear() {
+    expression = nil
+  }
+
   var value: Double? {
     return expr?.valueWith(variableValues)
   }
