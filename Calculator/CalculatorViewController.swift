@@ -97,14 +97,12 @@ class CalculatorViewController: UIViewController {
   }
 
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    if let id = (segue.identifier.flatMap { SegueIdentifier(rawValue: $0) }) {
-      switch id {
-      case .ShowGraph:
-        _ = graphViewController(segue.destinationViewController)
-          .map(configGraphViewController)
-      }
-      segue.destinationViewController
-    } else { fatalError("Invalid segue indentifier \(segue.identifier).") }
+    guard let id = segue.identifier.flatMap(SegueIdentifier.init)
+      else { fatalError("Invalid segue indentifier \(segue.identifier).") }
+    guard let gvc = graphViewController(segue.destinationViewController)
+      where id == .ShowGraph
+      else { return }
+    configGraphViewController(gvc)
   }
 
   private func graphViewController(someObject: AnyObject) -> GraphViewController? {
