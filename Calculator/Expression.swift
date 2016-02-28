@@ -24,7 +24,7 @@ extension Expression {
 
   init?(parse input: String) {
 
-    func parse(input: String) -> (expr: Expression, rest: String)? {
+    func parse(input: String) -> (Expression, String)? {
       guard let (first, rest) = decompose(input) else { return nil }
       if first == "(" {
         guard
@@ -44,7 +44,7 @@ extension Expression {
       }
     }
 
-    func parseBinaryOperator(left left: Expression, remaining: String) -> (expr: Expression, rest: String)? {
+    func parseBinaryOperator(left left: Expression, remaining: String) -> (Expression, String)? {
       guard
         let (op, rest) = decompose(remaining),
         let (right, restFinal) = parse(rest)
@@ -88,7 +88,7 @@ extension Expression {
       }
     }
 
-    func parseDouble(input: String) -> (expr: Expression, rest: String)? {
+    func parseDouble(input: String) -> (Expression, String)? {
       guard let (first, rest) = decompose(input) else { return nil }
       switch first {
       case "0"..."9", "-", ".":
@@ -98,7 +98,7 @@ extension Expression {
       }
     }
 
-    func parseVariable(input: String) -> (expr: Expression, rest: String)? {
+    func parseVariable(input: String) -> (Expression, String)? {
       guard let first = decompose(input)?.head where isAlpha(first)
         else { return nil }
       let (succeeds, remainder) = splitWhile(input, predicate: isAlpha)
@@ -106,7 +106,7 @@ extension Expression {
     }
 
     func parseUnitaryOperator(opStr: String, from input: String,
-      with expr: Expression->Expression) -> (expr: Expression, rest: String)? {
+      with expr: Expression->Expression) -> (Expression, String)? {
         guard
           input.hasPrefix(opStr),
           let rest = dropPrefix(opStr, from: input),

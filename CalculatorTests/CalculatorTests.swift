@@ -12,32 +12,32 @@ import XCTest
 
 class CalculatorTests: XCTestCase {
     
-  func testExprParse() {
-    XCTAssertEqual(Expr(parse: "12"), .Num(12.0))
-    XCTAssertEqual(Expr(parse: "(12)"), .Num(12.0))
-    XCTAssertEqual(Expr(parse: "(1+2)"), .Add(.Num(1.0), .Num(2.0)))
-    XCTAssertEqual(Expr(parse: "(1−2)"), .Sub(.Num(1.0), .Num(2.0)))
-    XCTAssertEqual(Expr(parse: "(1×2)"), .Mul(.Num(1.0), .Num(2.0)))
-    XCTAssertEqual(Expr(parse: "(1÷2)"), .Div(.Num(1.0), .Num(2.0)))
-    XCTAssertEqual(Expr(parse: "sin(23+2)"), .Sin(.Add(.Num(23.0), .Num(2.0))))
-    XCTAssertEqual(Expr(parse: "cos(34)"), .Cos(.Num(34.0)))
-    XCTAssertEqual(Expr(parse: "(√(5+45))"), .Sqrt(.Add(.Num(5.0), .Num(45.0))))
-    XCTAssertEqual(Expr(parse: "(x+3)"), .Add(.Var("x"), .Num(3.0)))
-    XCTAssertEqual(Expr(parse: "x"), .Var("x"))
-    XCTAssertEqual(Expr(parse: "(x)"), .Var("x"))
+  func testExpressionParse() {
+    XCTAssertEqual(Expression(parse: "12"), .Num(12.0))
+    XCTAssertEqual(Expression(parse: "(12)"), .Num(12.0))
+    XCTAssertEqual(Expression(parse: "(1+2)"), .Add(.Num(1.0), .Num(2.0)))
+    XCTAssertEqual(Expression(parse: "(1−2)"), .Sub(.Num(1.0), .Num(2.0)))
+    XCTAssertEqual(Expression(parse: "(1×2)"), .Mul(.Num(1.0), .Num(2.0)))
+    XCTAssertEqual(Expression(parse: "(1÷2)"), .Div(.Num(1.0), .Num(2.0)))
+    XCTAssertEqual(Expression(parse: "sin(23+2)"), .Sin(.Add(.Num(23.0), .Num(2.0))))
+    XCTAssertEqual(Expression(parse: "cos(34)"), .Cos(.Num(34.0)))
+    XCTAssertEqual(Expression(parse: "(√(5+45))"), .Sqrt(.Add(.Num(5.0), .Num(45.0))))
+    XCTAssertEqual(Expression(parse: "(x+3)"), .Add(.Var("x"), .Num(3.0)))
+    XCTAssertEqual(Expression(parse: "x"), .Var("x"))
+    XCTAssertEqual(Expression(parse: "(x)"), .Var("x"))
   }
 
   func testOrderOfOperations() {
-    XCTAssertEqual(Expr(parse: "1+2×3"), .Add(.Num(1), .Mul(.Num(2), .Num(3))))
-    XCTAssertEqual(Expr(parse: "1+2÷3"), .Add(.Num(1), .Div(.Num(2), .Num(3))))
-    XCTAssertEqual(Expr(parse: "1×2+3"), .Add(.Mul(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1+2+3"), .Add(.Add(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1+2−3"), .Sub(.Add(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1−2−3"), .Sub(.Sub(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1−2+3"), .Add(.Sub(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1×2×3"), .Mul(.Mul(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1÷2÷3"), .Div(.Div(.Num(1), .Num(2)), .Num(3)))
-    XCTAssertEqual(Expr(parse: "1+2×3+2"), .Add(.Add(.Num(1), .Mul(.Num(2), .Num(3))), .Num(2)))
+    XCTAssertEqual(Expression(parse: "1+2×3"), .Add(.Num(1), .Mul(.Num(2), .Num(3))))
+    XCTAssertEqual(Expression(parse: "1+2÷3"), .Add(.Num(1), .Div(.Num(2), .Num(3))))
+    XCTAssertEqual(Expression(parse: "1×2+3"), .Add(.Mul(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1+2+3"), .Add(.Add(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1+2−3"), .Sub(.Add(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1−2−3"), .Sub(.Sub(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1−2+3"), .Add(.Sub(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1×2×3"), .Mul(.Mul(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1÷2÷3"), .Div(.Div(.Num(1), .Num(2)), .Num(3)))
+    XCTAssertEqual(Expression(parse: "1+2×3+2"), .Add(.Add(.Num(1), .Mul(.Num(2), .Num(3))), .Num(2)))
   }
 
 }
