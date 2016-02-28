@@ -27,6 +27,8 @@ class CalculatorViewController: UIViewController {
   private let brain = CalculatorBrain()
   private var oldVariableValues: CalculatorBrain.VariablesType?
 
+  private var calculator = Calculator()
+
   @IBAction func appendDigit(sender: UIButton) {
     guard let digit = sender.currentTitle else { return }
     if userIsTyping { appendToDisplay(digit) }
