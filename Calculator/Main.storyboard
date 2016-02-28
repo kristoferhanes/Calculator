@@ -100,6 +100,9 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="appendCharacter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fR9-ib-5sD"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="2gy-bI-IY4" customClass="RoundedButton" customModule="Calculator" customModuleProvider="target">
                                         <rect key="frame" x="8" y="8" width="102" height="58"/>
@@ -543,7 +546,7 @@
                     <navigationItem key="navigationItem" title="Calculator" id="ZDM-Z6-sNW"/>
                     <connections>
                         <outlet property="displayLabel" destination="JpY-5Q-v2W" id="9hn-KP-HES"/>
-                        <outlet property="historyDisplayLabel" destination="8cZ-BK-D5e" id="Ewq-7w-eTc"/>
+                        <outlet property="expressionLabel" destination="8cZ-BK-D5e" id="BNb-ns-8Hc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

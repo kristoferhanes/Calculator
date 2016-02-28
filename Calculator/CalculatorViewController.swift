@@ -22,9 +22,9 @@ class CalculatorViewController: UIViewController {
   }
 
   @IBOutlet weak var displayLabel: RoundedLabel!
-  @IBOutlet weak var historyDisplayLabel: RoundedLabel!
+  @IBOutlet weak var expressionLabel: RoundedLabel!
 
-  private var oldVariableValues: CalculatorBrain.VariablesType?
+  private var oldVariableValues: [String:Double]?
 
   private var calculator = Calculator() {
     didSet {
@@ -38,6 +38,7 @@ class CalculatorViewController: UIViewController {
     guard let vc = (splitViewController?.viewControllers[1]).flatMap(graphViewController)
       else { return }
     configGraphViewController(vc)
+    calculator.variables["π"] = M_PI
   }
 
   private let defaults = NSUserDefaults.standardUserDefaults()
@@ -57,13 +58,16 @@ class CalculatorViewController: UIViewController {
   }
 
   @IBAction func delete() {
-    guard let historyText = historyDisplayLabel.text else { return }
-    historyDisplayLabel.text = String(historyText.characters.dropLast())
+    guard let expression = expressionLabel.text else { return }
+    expressionLabel.text = String(expression.characters.dropLast())
+    calculator.expression = expressionLabel.text
   }
 
   @IBAction func appendCharacter(sender: UIButton) {
     guard let title = sender.currentTitle else { return }
-    historyDisplayLabel.text = historyDisplayLabel.text.map { $0 + title }
+    let expression = expressionLabel.text ?? ""
+    expressionLabel.text = expression + title
+    calculator.expression = expressionLabel.text
   }
 
   @IBAction func clear() {
@@ -109,7 +113,7 @@ class CalculatorViewController: UIViewController {
   }
 
   private func bindModelToView() {
-    historyDisplayLabel.text = calculator.expression
+    expressionLabel.text = calculator.expression
     displayValue = calculator.value
   }
 
@@ -118,8 +122,14 @@ class CalculatorViewController: UIViewController {
       return displayLabel.text.flatMap { Double($0) }
     }
     set {
+      func removeDecimalZero(str: String) -> String {
+        guard str.characters.count > 1 else { return str }
+        let end = str.startIndex.advancedBy(str.characters.count-2)
+        return str.substringFromIndex(end) == ".0" ? str[str.startIndex..<end] : str
+      }
+
       if let nv = newValue {
-        displayLabel.text = "\(nv)".removeDecimalZero()
+        displayLabel.text = removeDecimalZero("\(nv)")
       } else {
         displayLabel.text = " "
       }

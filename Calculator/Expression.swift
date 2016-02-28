@@ -29,9 +29,10 @@ extension Expression {
       if first == "(" {
         guard
           let (e1, rest1) = parse(rest),
-          let (closeParen, restFinal) = decompose(rest1) where closeParen == ")"
+          let (closeParen, rest2) = decompose(rest1) where closeParen == ")"
           else { return nil }
-        return (e1, restFinal)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2) ?? (e1, rest2)
+        return (e2, restFinal)
       } else {
         guard let (e1, rest1) = parseDouble(input)
           ?? parseUnitaryOperator("√", from: input, with: Expression.Sqrt)

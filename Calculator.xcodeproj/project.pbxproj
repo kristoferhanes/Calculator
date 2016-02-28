@@ -22,8 +22,6 @@
 		5EB580D21C835068009FE00E /* RoundedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB580D11C835068009FE00E /* RoundedLabel.swift */; };
 		5EC02A0C1B016B650009FEF5 /* MasterFirstSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */; };
 		5EC91FCD1AFDAA6700B02972 /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */; };
-		5EDAE85E1AFAFAF5002B1AD2 /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */; };
-		5EDAE8601AFC58FF002B1AD2 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,8 +54,6 @@
 		5EB580D11C835068009FE00E /* RoundedLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedLabel.swift; sourceTree = "<group>"; };
 		5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFirstSplitViewController.swift; sourceTree = "<group>"; };
 		5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
-		5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
-		5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,8 +99,6 @@
 				5EC91FCC1AFDAA6700B02972 /* CalculatorViewController.swift */,
 				5E4EF3441AFF29DB002B7979 /* GraphViewController.swift */,
 				5E79182D1AFF35E4008145C8 /* GraphView.swift */,
-				5EDAE85D1AFAFAF5002B1AD2 /* CalculatorBrain.swift */,
-				5EDAE85F1AFC58FF002B1AD2 /* Helpers.swift */,
 				5EC02A0B1B016B650009FEF5 /* MasterFirstSplitViewController.swift */,
 				5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */,
 				5E4807C81C7F5F060012FE1A /* RoundedButton.swift */,
@@ -250,7 +244,6 @@
 			files = (
 				5E4807CB1C7F61E20012FE1A /* Expression.swift in Sources */,
 				5EC91FCD1AFDAA6700B02972 /* CalculatorViewController.swift in Sources */,
-				5EDAE85E1AFAFAF5002B1AD2 /* CalculatorBrain.swift in Sources */,
 				5E78CD4A1C8285C000D472CC /* Calculator.swift in Sources */,
 				5EB580D21C835068009FE00E /* RoundedLabel.swift in Sources */,
 				5E79182E1AFF35E4008145C8 /* GraphView.swift in Sources */,
@@ -260,7 +253,6 @@
 				5EB580D01C834F14009FE00E /* RoundedView.swift in Sources */,
 				5E6EDA291AFAD92D00A1B0CC /* AppDelegate.swift in Sources */,
 				5EC02A0C1B016B650009FEF5 /* MasterFirstSplitViewController.swift in Sources */,
-				5EDAE8601AFC58FF002B1AD2 /* Helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
