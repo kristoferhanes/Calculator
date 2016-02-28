@@ -11,10 +11,10 @@ import Foundation
 struct Calculator {
   var expression: String? {
     didSet {
-      expr = expression.flatMap(Expr.init)
+      expr = expression.flatMap(Expression.init)
     }
   }
-  private var expr: Expr?
+  private var expr: Expression?
   private var variableValues: [String:Double]
 }
 

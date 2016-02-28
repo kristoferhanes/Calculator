@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5E4807C91C7F5F060012FE1A /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4807C81C7F5F060012FE1A /* RoundedButton.swift */; };
-		5E4807CB1C7F61E20012FE1A /* Expr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4807CA1C7F61E20012FE1A /* Expr.swift */; };
+		5E4807CB1C7F61E20012FE1A /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4807CA1C7F61E20012FE1A /* Expression.swift */; };
 		5E4EF3431AFF29D4002B7979 /* AxesDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */; };
 		5E4EF3491AFF2B30002B7979 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E4EF3481AFF2B30002B7979 /* Main.storyboard */; };
 		5E4EF34B1AFF2D41002B7979 /* GraphViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EF3441AFF29DB002B7979 /* GraphViewController.swift */; };
@@ -38,7 +38,7 @@
 
 /* Begin PBXFileReference section */
 		5E4807C81C7F5F060012FE1A /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
-		5E4807CA1C7F61E20012FE1A /* Expr.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expr.swift; sourceTree = "<group>"; };
+		5E4807CA1C7F61E20012FE1A /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		5E4EF3421AFF29D4002B7979 /* AxesDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AxesDrawer.swift; sourceTree = "<group>"; };
 		5E4EF3441AFF29DB002B7979 /* GraphViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphViewController.swift; sourceTree = "<group>"; };
 		5E4EF3481AFF2B30002B7979 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 				5E4807C81C7F5F060012FE1A /* RoundedButton.swift */,
 				5EB580CF1C834F13009FE00E /* RoundedView.swift */,
 				5EB580D11C835068009FE00E /* RoundedLabel.swift */,
-				5E4807CA1C7F61E20012FE1A /* Expr.swift */,
+				5E4807CA1C7F61E20012FE1A /* Expression.swift */,
 				5E78CD491C8285C000D472CC /* Calculator.swift */,
 				5E6EDA261AFAD92D00A1B0CC /* Supporting Files */,
 			);
@@ -248,7 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4807CB1C7F61E20012FE1A /* Expr.swift in Sources */,
+				5E4807CB1C7F61E20012FE1A /* Expression.swift in Sources */,
 				5EC91FCD1AFDAA6700B02972 /* CalculatorViewController.swift in Sources */,
 				5EDAE85E1AFAFAF5002B1AD2 /* CalculatorBrain.swift in Sources */,
 				5E78CD4A1C8285C000D472CC /* Calculator.swift in Sources */,
