@@ -114,6 +114,17 @@ class CalculatorViewController: UIViewController {
   }
 
   private func configGraphViewController(gvc: GraphViewController) {
+
+    func removeSurroundingWhitespace(s: String) -> String {
+      let whitespaceCharSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
+      return s.stringByTrimmingCharactersInSet(whitespaceCharSet)
+    }
+
+    func lastExpression(expressionsString: String) -> String {
+      let expressions = expressionsString.componentsSeparatedByString(",")
+      return expressions.last.map(removeSurroundingWhitespace) ?? ""
+    }
+
     gvc.dataSource = self
     gvc.title = lastExpression(brain.description)
   }
@@ -151,14 +162,4 @@ extension CalculatorViewController: GraphViewDataSource {
     brain.variableValues = ovv
   }
 
-}
-
-private func lastExpression(expressionsString: String) -> String {
-  let expressions = expressionsString.componentsSeparatedByString(",")
-  return expressions.isEmpty ? "" : removeSurroundingWhitespace(expressions.last!)
-}
-
-private func removeSurroundingWhitespace(s: String) -> String {
-  let charSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
-  return s.stringByTrimmingCharactersInSet(charSet)
 }

@@ -15,7 +15,7 @@ struct Calculator {
     }
   }
   private var expr: Expr?
-  private var env: [String:Double]
+  private var variableValues: [String:Double]
 }
 
 extension Calculator {
@@ -23,19 +23,29 @@ extension Calculator {
   init() {
     expression = nil
     expr = nil
-    env = [:]
+    variableValues = [:]
   }
 
   mutating func updateVariable(variable: String, withValue value: Double) {
-    env[variable] = value
+    variableValues[variable] = value
   }
 
   mutating func deleteVariable(variable: String) {
-    env[variable] = nil
+    variableValues[variable] = nil
+  }
+
+  mutating func deleteAllVariables() {
+    variableValues = [:]
+  }
+
+  mutating func mergeVariables(variables: [String:Double]) {
+    for (variable, value) in variables {
+      variableValues[variable] = value
+    }
   }
 
   var value: Double? {
-    return expr?.valueWith(env)
+    return expr?.valueWith(variableValues)
   }
 
 }
