@@ -31,7 +31,7 @@ extension Expression {
           let (e1, rest1) = parse(rest),
           let (closeParen, rest2) = decompose(rest1) where closeParen == ")"
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2) ?? (e1, rest2)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2, precidence: false) ?? (e1, rest2)
         return (e2, restFinal)
       } else {
         guard let (e1, rest1) = parseDouble(input)
@@ -40,12 +40,12 @@ extension Expression {
           ?? parseUnitaryOperator("cos", from: input, with: Expression.Cos)
           ?? parseVariable(input)
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1) ?? (e1, rest1)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1, precidence: true) ?? (e1, rest1)
         return (e2, restFinal)
       }
     }
 
-    func parseBinaryOperator(left left: Expression, remaining: String) -> (Expression, String)? {
+    func parseBinaryOperator(left left: Expression, remaining: String, precidence: Bool) -> (Expression, String)? {
       guard
         let (op, rest) = decompose(remaining),
         let (right, restFinal) = parse(rest)
@@ -55,10 +55,14 @@ extension Expression {
       case "+": return (rotateOperation(.Add(left, right)), restFinal)
       case "−": return (rotateOperation(.Sub(left, right)), restFinal)
       case "×":
-        let operation = correctPrecidence(left: left, right: right, operation: Expression.Mul)
+        let operation = precidence
+          ? correctPrecidence(left: left, right: right, operation: Expression.Mul)
+          : .Mul(left, right)
         return (rotateOperation(operation), restFinal)
       case "÷":
-        let operation = correctPrecidence(left: left, right: right, operation: Expression.Div)
+        let operation = precidence
+          ? correctPrecidence(left: left, right: right, operation: Expression.Div)
+          : .Div(left, right)
         return (rotateOperation(operation), restFinal)
       default: return nil
       }

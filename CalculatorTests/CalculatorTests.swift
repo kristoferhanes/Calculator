@@ -42,10 +42,8 @@ class CalculatorTests: XCTestCase {
 
   func testParens() {
     XCTAssertEqual(Expression(parse: "(1+2)×2"), .Mul(.Add(.Num(1.0), .Num(2.0)), .Num(2.0)))
-  }
-
-  func testParens2() {
-    XCTAssertEqual(Expression(parse: "(1+2)×(2+1)"), .Mul(.Add(.Num(1.0), .Num(2.0)), .Add(.Num(2.0), .Num(1.0))))
+    XCTAssertEqual(Expression(parse: "(1+2)×(2+1)"),
+      .Mul(.Add(.Num(1.0), .Num(2.0)), .Add(.Num(2.0), .Num(1.0))))
   }
 
 }
