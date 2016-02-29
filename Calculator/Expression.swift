@@ -31,7 +31,8 @@ extension Expression {
           let (e1, rest1) = parse(rest),
           let (closeParen, rest2) = decompose(rest1) where closeParen == ")"
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2, precidence: false) ?? (e1, rest2)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2,
+          precidence: false) ?? (e1, rest2)
         return (e2, restFinal)
       } else {
         guard let (e1, rest1) = parseDouble(input)
@@ -40,12 +41,14 @@ extension Expression {
           ?? parseUnitaryOperator("cos", from: input, with: Expression.Cos)
           ?? parseVariable(input)
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1, precidence: true) ?? (e1, rest1)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1,
+          precidence: true) ?? (e1, rest1)
         return (e2, restFinal)
       }
     }
 
-    func parseBinaryOperator(left left: Expression, remaining: String, precidence: Bool) -> (Expression, String)? {
+    func parseBinaryOperator(left left: Expression, remaining: String,
+      precidence: Bool) -> (Expression, String)? {
       guard
         let (op, rest) = decompose(remaining),
         let (right, restFinal) = parse(rest)
@@ -85,12 +88,13 @@ extension Expression {
       }
     }
 
-    func correctPrecidence(left left: Expression, right: Expression, operation: (Expression,Expression)->Expression) -> Expression {
-      switch right {
-      case let .Add(e1, e2): return .Add(operation(left, e1), e2)
-      case let .Sub(e1, e2): return .Sub(operation(left, e1), e2)
-      default: return operation(left, right)
-      }
+    func correctPrecidence(left left: Expression, right: Expression,
+      operation: (Expression,Expression)->Expression) -> Expression {
+        switch right {
+        case let .Add(e1, e2): return .Add(operation(left, e1), e2)
+        case let .Sub(e1, e2): return .Sub(operation(left, e1), e2)
+        default: return operation(left, right)
+        }
     }
 
     func parseDouble(input: String) -> (Expression, String)? {
