@@ -12,8 +12,11 @@ struct Calculator {
 
   var expression: String? {
     didSet {
-      guard let exprStr = expression else { return }
-      expr = Expression(parse: exprStr)
+      if let exprStr = expression {
+        expr = Expression(parse: exprStr)
+      } else {
+        expr = nil
+      }
     }
   }
 
