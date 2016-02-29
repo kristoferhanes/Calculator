@@ -125,7 +125,7 @@ extension Expression {
     }
 
     func isAlpha(c: Character) -> Bool {
-      return "a"..."z" ~= c || "A"..."Z" ~= c
+      return "a"..."z" ~= c || "A"..."Z" ~= c || "π" == c
     }
 
     func splitWhile(str: String, predicate: Character->Bool) -> (String, String) {
