@@ -161,12 +161,12 @@ extension Expression {
     self = expr
   }
 
-  func valueWith(env: [String:Double]) -> Double? {
+  func value(with env: [String:Double]) -> Double? {
 
     func combine(e1: Expression, _ e2: Expression, with op: (Double, Double)->Double) -> Double? {
       guard
-        let n1 = e1.valueWith(env),
-        let n2 = e2.valueWith(env)
+        let n1 = e1.value(with: env),
+        let n2 = e2.value(with: env)
         else { return nil }
       return op(n1, n2)
     }
@@ -178,14 +178,14 @@ extension Expression {
     case let .Sub(e1, e2): return combine(e1, e2, with: -)
     case let .Mul(e1, e2): return combine(e1, e2, with: *)
     case let .Div(e1, e2): return combine(e1, e2, with: /)
-    case let .Sqrt(e): return e.valueWith(env).map(sqrt)
-    case let .Sin(e): return e.valueWith(env).map(sin)
-    case let .Cos(e): return e.valueWith(env).map(cos)
+    case let .Sqrt(e): return e.value(with: env).map(sqrt)
+    case let .Sin(e): return e.value(with: env).map(sin)
+    case let .Cos(e): return e.value(with: env).map(cos)
     }
   }
 
   var value: Double? {
-    return valueWith([:])
+    return value(with: [:])
   }
 
 }

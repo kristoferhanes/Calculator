@@ -43,7 +43,7 @@ extension Calculator {
   }
 
   var value: Double? {
-    return expr?.valueWith(variables)
+    return expr?.value(with: variables)
   }
 
 }

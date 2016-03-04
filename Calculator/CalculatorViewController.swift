@@ -142,7 +142,7 @@ extension CalculatorViewController: GraphViewDataSource {
 
   func yForX(x: CGFloat) -> CGFloat? {
     calculator.variables[Constants.MemoryVariableName] = Double(x)
-    return calculator.value.map(CGFloat.init)
+    return calculator.value.map { CGFloat($0) }
   }
 
   func startProviding() {
