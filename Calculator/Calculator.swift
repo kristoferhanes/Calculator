@@ -45,5 +45,5 @@ extension Calculator {
   var value: Double? {
     return expr?.value(with: variables)
   }
-
+  
 }

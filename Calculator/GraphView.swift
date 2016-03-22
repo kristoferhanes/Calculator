@@ -38,7 +38,7 @@ class GraphView: UIView {
     axesDrawer.color = color
     axesDrawer.highQuality = precision <= 1
     axesDrawer.drawAxesInRect(rect, origin: origin!,
-      pointsPerUnit: pointsPerUnit)
+                              pointsPerUnit: pointsPerUnit)
     drawGraph(rect)
   }
 
@@ -61,31 +61,31 @@ class GraphView: UIView {
 }
 
 private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat,
-  dataSource: GraphViewDataSource?) -> CGFloat? {
+                   dataSource: GraphViewDataSource?) -> CGFloat? {
 
-    return dataSource?.yForX(viewToReal(x, origin: origin.x,
-      pointsPerUnit: pointPerUnit)).map { y in
-        realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
+  return dataSource?.yForX(viewToReal(x, origin: origin.x,
+    pointsPerUnit: pointPerUnit)).map { y in
+      realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
 }
 
 private func viewToReal(coordinate: CGFloat, origin: CGFloat,
-  pointsPerUnit: CGFloat) -> CGFloat {
+                        pointsPerUnit: CGFloat) -> CGFloat {
 
-    return (coordinate - origin) / pointsPerUnit
+  return (coordinate - origin) / pointsPerUnit
 }
 
 private func realToView(coordinate: CGFloat, origin: CGFloat,
-  pointsPerUnit: CGFloat) -> CGFloat {
+                        pointsPerUnit: CGFloat) -> CGFloat {
 
-    return coordinate * pointsPerUnit + origin
+  return coordinate * pointsPerUnit + origin
 }
 
 private func drawPoint(path: UIBezierPath, point: CGPoint?,
-  drawing: Bool) -> Bool {
+                       drawing: Bool) -> Bool {
 
-    guard point != nil else { return false }
-    lineTo(path, point: point!, drawing: drawing)
-    return true
+  guard point != nil else { return false }
+  lineTo(path, point: point!, drawing: drawing)
+  return true
 }
 
 private func lineTo(path: UIBezierPath, point: CGPoint, drawing: Bool) {

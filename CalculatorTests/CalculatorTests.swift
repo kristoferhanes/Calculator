@@ -11,7 +11,7 @@ import XCTest
 @testable import Calculator
 
 class CalculatorTests: XCTestCase {
-    
+
   func testExpressionParse() {
     XCTAssertEqual(Expression(parse: "12"), .Num(12.0))
     XCTAssertEqual(Expression(parse: "(12)"), .Num(12.0))
@@ -43,9 +43,9 @@ class CalculatorTests: XCTestCase {
   func testParens() {
     XCTAssertEqual(Expression(parse: "(1+2)×2"), .Mul(.Add(.Num(1.0), .Num(2.0)), .Num(2.0)))
     XCTAssertEqual(Expression(parse: "(1+2)×(2+1)"),
-      .Mul(.Add(.Num(1.0), .Num(2.0)), .Add(.Num(2.0), .Num(1.0))))
+                   .Mul(.Add(.Num(1.0), .Num(2.0)), .Add(.Num(2.0), .Num(1.0))))
+    XCTAssertEqual(Expression(parse: "9×(2+1)"), .Mul(.Num(9), .Add(.Num(2), .Num(1))))
+    XCTAssertEqual(Expression(parse: "9+(2×1)"), .Add(.Num(9), .Mul(.Num(2), .Num(1))))
   }
-
+  
 }
-
-

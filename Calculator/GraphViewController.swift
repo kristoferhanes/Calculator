@@ -35,7 +35,7 @@ class GraphViewController: UIViewController {
     set {
       graphView.pointsPerUnit = newValue
       defaults.setObject(graphView.pointsPerUnit,
-        forKey: Constants.PointsPerUnitKey)
+                         forKey: Constants.PointsPerUnitKey)
     }
   }
 
@@ -102,5 +102,5 @@ class GraphViewController: UIViewController {
     default: break
     }
   }
-
+  
 }
