@@ -61,6 +61,7 @@ class CalculatorViewController: UIViewController {
     guard let expression = expressionLabel.text else { return }
     expressionLabel.text = String(expression.characters.dropLast())
     calculator.expression = expressionLabel.text
+    saveCalculatorToDefaults()
   }
 
   @IBAction func appendCharacter(sender: UIButton) {
@@ -68,12 +69,13 @@ class CalculatorViewController: UIViewController {
     let expression = expressionLabel.text ?? ""
     expressionLabel.text = expression + title
     calculator.expression = expressionLabel.text
+    saveCalculatorToDefaults()
   }
 
   @IBAction func clear() {
     calculator.clear()
-    saveCalculatorToDefaults()
     displayValue = nil
+    saveCalculatorToDefaults()
   }
 
   @IBAction func clearAll() {
@@ -84,8 +86,8 @@ class CalculatorViewController: UIViewController {
   @IBAction func setVariable(sender: UIButton) {
     if sender.currentTitle == Constants.SetMemoryButtonTitle {
       calculator.variables[Constants.MemoryVariableName] = displayValue
+      saveCalculatorToDefaults()
     }
-    saveCalculatorToDefaults()
   }
 
   @IBAction func evalute() {
