@@ -102,10 +102,17 @@ extension Expression {
 
     func parseDouble(input: String) -> (Expression, String)? {
       guard let (first, rest) = decompose(input) else { return nil }
-      switch first {
-      case "0"..."9", "-", ".":
+
+      func parseDouble(withPrefix prefix: String) -> (Expression, String) {
         let (succeeds, remainder) = splitWhile(rest, predicate: isNumeral)
-        return (.Num(Double("\(first)" + succeeds)!), remainder)
+        return (.Num(Double(prefix + "\(first)" + succeeds)!), remainder)
+      }
+
+      switch first {
+      case "0"..."9", "-":
+        return parseDouble(withPrefix: "")
+      case ".":
+        return parseDouble(withPrefix: "0")
       default: return nil
       }
     }
