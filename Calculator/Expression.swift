@@ -11,6 +11,7 @@ import Foundation
 indirect enum Expression {
   case Num(Double)
   case Var(String)
+  case Paren(Expression)
   case Add(Expression, Expression)
   case Sub(Expression, Expression)
   case Mul(Expression, Expression)
@@ -31,9 +32,9 @@ extension Expression {
           let (e1, rest1) = parse(rest),
           let (closeParen, rest2) = decompose(rest1) where closeParen == ")"
           else { return nil }
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest2,
-                                                  precidence: false) ?? (e1, rest2)
-        return (e2, restFinal)
+        let (e2, rest3) = (Expression.Paren(e1), rest2)
+        let (e3, restFinal) = parseBinaryOperator(left: e2, remaining: rest3) ?? (e2, rest3)
+        return (e3, restFinal)
       } else {
         guard let (e1, rest1) = parseDouble(input)
           ?? parseUnitaryOperator("√", from: input, with: Expression.Sqrt)
@@ -42,15 +43,12 @@ extension Expression {
           ?? parseVariable(input)
           else { return nil }
 
-        let precidence = rest1.characters.dropFirst().first != "("
-        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1,
-                                                  precidence: precidence) ?? (e1, rest1)
+        let (e2, restFinal) = parseBinaryOperator(left: e1, remaining: rest1) ?? (e1, rest1)
         return (e2, restFinal)
       }
     }
 
-    func parseBinaryOperator(left left: Expression, remaining: String,
-                                  precidence: Bool) -> (Expression, String)? {
+    func parseBinaryOperator(left left: Expression, remaining: String) -> (Expression, String)? {
 
       guard
         let (op, rest) = decompose(remaining),
@@ -61,14 +59,10 @@ extension Expression {
       case "+": return (rotateOperation(.Add(left, right)), restFinal)
       case "−": return (rotateOperation(.Sub(left, right)), restFinal)
       case "×":
-        let operation = precidence
-          ? correctPrecidence(left: left, right: right, operation: Expression.Mul)
-          : .Mul(left, right)
+        let operation = correctPrecidence(left: left, right: right, operation: Expression.Mul)
         return (rotateOperation(operation), restFinal)
       case "÷":
-        let operation = precidence
-          ? correctPrecidence(left: left, right: right, operation: Expression.Div)
-          : .Div(left, right)
+        let operation = correctPrecidence(left: left, right: right, operation: Expression.Div)
         return (rotateOperation(operation), restFinal)
       default: return nil
       }
@@ -127,7 +121,6 @@ extension Expression {
     func parseUnitaryOperator(opStr: String, from input: String,
                               with expr: Expression->Expression) -> (Expression, String)? {
       guard
-        input.hasPrefix(opStr),
         let rest = dropPrefix(opStr, from: input),
         let (e, restFinal) = parse(rest)
         else { return nil }
@@ -155,8 +148,7 @@ extension Expression {
     }
 
     func dropPrefix(drop: String, from str: String) -> String? {
-      let dropCount = str.characters.count - drop.characters.count
-      guard drop == String(str.characters.dropLast(dropCount)) else { return nil }
+      guard str.hasPrefix(drop) else { return nil }
       return String(str.characters.dropFirst(drop.characters.count))
     }
 
@@ -184,6 +176,7 @@ extension Expression {
     switch self {
     case let .Num(n): return n
     case let .Var(s): return env[s]
+    case let .Paren(e): return e.value(with: env)
     case let .Add(e1, e2): return combine(e1, e2, with: +)
     case let .Sub(e1, e2): return combine(e1, e2, with: -)
     case let .Mul(e1, e2): return combine(e1, e2, with: *)
@@ -206,6 +199,7 @@ func == (lhs: Expression, rhs: Expression) -> Bool {
   switch (lhs, rhs) {
   case let (.Num(l), .Num(r)): return l == r
   case let (.Var(l), .Var(r)): return l == r
+  case let (.Paren(l), .Paren(r)): return l == r
   case let (.Add(e1, e2), .Add(e3, e4)): return e1 == e3 && e2 == e4
   case let (.Sub(e1, e2), .Sub(e3, e4)): return e1 == e3 && e2 == e4
   case let (.Mul(e1, e2), .Mul(e3, e4)): return e1 == e3 && e2 == e4
@@ -220,28 +214,18 @@ func == (lhs: Expression, rhs: Expression) -> Bool {
 extension Expression: CustomStringConvertible {
 
   var description: String {
-
-    func toString(expr: Expression) -> String {
-      switch expr {
-      case let .Num(n): return "\(n)"
-      case let .Var(s): return s
-      case let .Add(e1, e2): return "(\(toString(e1))+\(toString(e2)))"
-      case let .Sub(e1, e2): return "(\(toString(e1))−\(toString(e2)))"
-      case let .Mul(e1, e2): return "(\(toString(e1))×\(toString(e2)))"
-      case let .Div(e1, e2): return "(\(toString(e1))÷\(toString(e2)))"
-      case let .Sqrt(e): return "sqrt(\(toString(e)))"
-      case let .Sin(e): return "sin(\(toString(e)))"
-      case let .Cos(e): return "cos(\(toString(e)))"
-      }
+    switch self {
+    case let .Num(n): return "\(n)"
+    case let .Var(s): return s
+    case let .Paren(e): return "(\(e))"
+    case let .Add(e1, e2): return "\(e1)+\(e2)"
+    case let .Sub(e1, e2): return "\(e1)−\(e2)"
+    case let .Mul(e1, e2): return "\(e1)×\(e2)"
+    case let .Div(e1, e2): return "\(e1)÷\(e2)"
+    case let .Sqrt(e): return "sqrt(\(e))"
+    case let .Sin(e): return "sin(\(e))"
+    case let .Cos(e): return "cos(\(e))"
     }
-
-    func removeOutsideParens(str: String) -> String {
-      guard str.characters.first == "(" && str.characters.last == ")"
-        else { return str }
-      return String(str.characters.dropFirst().dropLast())
-    }
-    
-    return removeOutsideParens(toString(self))
   }
   
 }
