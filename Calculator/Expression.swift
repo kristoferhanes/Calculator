@@ -25,7 +25,9 @@ extension Expression {
 
   init?(parse input: String) {
 
-    func parse(input: String) -> (Expression, String)? {
+    typealias Stream = String.CharacterView
+
+    func parse(input: Stream) -> (Expression, Stream)? {
       guard let (first, rest) = decompose(input) else { return nil }
       if first == "(" {
         guard
@@ -48,7 +50,7 @@ extension Expression {
       }
     }
 
-    func parseBinaryOperator(left left: Expression, remaining: String) -> (Expression, String)? {
+    func parseBinaryOperator(left left: Expression, remaining: Stream) -> (Expression, Stream)? {
 
       guard
         let (op, rest) = decompose(remaining),
@@ -94,12 +96,12 @@ extension Expression {
       }
     }
 
-    func parseDouble(input: String) -> (Expression, String)? {
+    func parseDouble(input: Stream) -> (Expression, Stream)? {
       guard let (first, rest) = decompose(input) else { return nil }
 
-      func parseDouble(withPrefix prefix: String) -> (Expression, String) {
+      func parseDouble(withPrefix prefix: String) -> (Expression, Stream) {
         let (succeeds, remainder) = splitWhile(rest, predicate: isNumeral)
-        return (.Num(Double(prefix + "\(first)" + succeeds)!), remainder)
+        return (.Num(Double(prefix + "\(first)" + String(succeeds))!), remainder)
       }
 
       switch first {
@@ -111,17 +113,17 @@ extension Expression {
       }
     }
 
-    func parseVariable(input: String) -> (Expression, String)? {
+    func parseVariable(input: Stream) -> (Expression, Stream)? {
       guard let first = decompose(input)?.head where isAlpha(first)
         else { return nil }
       let (succeeds, remainder) = splitWhile(input, predicate: isAlpha)
-      return (.Var(succeeds), remainder)
+      return (.Var(String(succeeds)), remainder)
     }
 
-    func parseUnitaryOperator(opStr: String, from input: String,
-                              with expr: Expression->Expression) -> (Expression, String)? {
+    func parseUnitaryOperator(opStr: String, from input: Stream,
+                              with expr: Expression->Expression) -> (Expression, Stream)? {
       guard
-        let rest = dropPrefix(opStr, from: input),
+        let rest = dropPrefix(opStr.characters, from: input),
         let (e, restFinal) = parse(rest)
         else { return nil }
       return (expr(e), restFinal)
@@ -135,8 +137,8 @@ extension Expression {
       return "a"..."z" ~= c || "A"..."Z" ~= c || "π" == c
     }
 
-    func splitWhile(str: String, predicate: Character->Bool) -> (String, String) {
-      var taken = ""
+    func splitWhile(str: Stream, predicate: Character->Bool) -> (Stream, Stream) {
+      var taken = String.CharacterView()
       var remaining = str
 
       while let (c, r) = decompose(remaining) where predicate(c) {
@@ -147,18 +149,18 @@ extension Expression {
       return (taken, remaining)
     }
 
-    func dropPrefix(drop: String, from str: String) -> String? {
-      guard str.hasPrefix(drop) else { return nil }
-      return String(str.characters.dropFirst(drop.characters.count))
+    func dropPrefix(drop: Stream, from str: Stream) -> Stream? {
+      guard String(str).hasPrefix(String(drop)) else { return nil }
+      return str.dropFirst(drop.count)
     }
 
-    func decompose(str: String) -> (head: Character, tail: String)? {
-      guard let first = str.characters.first else { return nil }
-      let rest = String(str.characters.dropFirst())
+    func decompose(str: Stream) -> (head: Character, tail: Stream)? {
+      guard let first = str.first else { return nil }
+      let rest = str.dropFirst()
       return (first, rest)
     }
 
-    guard let (expr, remaining) = parse(input) where remaining == ""
+    guard let (expr, remaining) = parse(input.characters) where remaining.isEmpty
       else { return nil }
     self = expr
   }
