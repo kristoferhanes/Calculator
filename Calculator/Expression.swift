@@ -155,9 +155,7 @@ extension Expression {
     }
 
     func decompose(str: Stream) -> (head: Character, tail: Stream)? {
-      guard let first = str.first else { return nil }
-      let rest = str.dropFirst()
-      return (first, rest)
+      return str.first.map { ($0, str.dropFirst()) }
     }
 
     guard let (expr, remaining) = parse(input.characters) where remaining.isEmpty
