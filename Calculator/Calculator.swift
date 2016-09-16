@@ -22,7 +22,7 @@ struct Calculator {
 
   var variables: [String:Double]
 
-  private var expr: Expression?
+  fileprivate var expr: Expression?
 
 }
 

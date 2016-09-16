@@ -9,7 +9,7 @@
 import UIKit
 
 protocol GraphViewDataSource: class {
-  func yForX(x: CGFloat) -> CGFloat?
+  func yForX(_ x: CGFloat) -> CGFloat?
   func startProviding()
   func stopProviding()
 }
@@ -17,12 +17,12 @@ protocol GraphViewDataSource: class {
 class GraphView: UIView {
 
   @IBInspectable
-  var color: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+  var color: UIColor = UIColor.white { didSet { setNeedsDisplay() } }
 
   @IBInspectable
   var pointsPerUnit: CGFloat = 1 { didSet { setNeedsDisplay() } }
 
-  private let axesDrawer = AxesDrawer()
+  fileprivate let axesDrawer = AxesDrawer()
   weak var dataSource: GraphViewDataSource? { didSet { setNeedsDisplay() } }
   var origin: CGPoint? { didSet { setNeedsDisplay() } }
   var precision: CGFloat = 1 {
@@ -32,7 +32,7 @@ class GraphView: UIView {
     }
   }
 
-  override func drawRect(rect: CGRect) {
+  override func draw(_ rect: CGRect) {
     if origin == nil { origin = CGPoint(x: bounds.midX, y: bounds.midY) }
     axesDrawer.contentScaleFactor = contentScaleFactor
     axesDrawer.color = color
@@ -42,14 +42,14 @@ class GraphView: UIView {
     drawGraph(rect)
   }
 
-  final private func drawGraph(rect: CGRect) {
+  final fileprivate func drawGraph(_ rect: CGRect) {
     var drawing = false
     let origin = self.origin ?? CGPoint(x: bounds.midX, y: bounds.midY)
     let pointsPerUnit = self.pointsPerUnit
     let dataSource = self.dataSource
     dataSource?.startProviding()
     strokePathWithColor(color) { path in
-      for x in rect.minX.stride(through: rect.maxX, by: self.precision) {
+      for x in stride(from: rect.minX, through: rect.maxX, by: self.precision) {
         let point = yForX(x, origin: origin, pointPerUnit: pointsPerUnit,
           dataSource: dataSource).map { y in CGPoint(x: x, y: y) }
         drawing = drawPoint(path, point: point, drawing: drawing)
@@ -60,7 +60,7 @@ class GraphView: UIView {
 
 }
 
-private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat,
+private func yForX(_ x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat,
                    dataSource: GraphViewDataSource?) -> CGFloat? {
 
   return dataSource?.yForX(viewToReal(x, origin: origin.x,
@@ -68,19 +68,19 @@ private func yForX(x: CGFloat, origin: CGPoint, pointPerUnit: CGFloat,
       realToView(-y, origin: origin.y, pointsPerUnit: pointPerUnit) }
 }
 
-private func viewToReal(coordinate: CGFloat, origin: CGFloat,
+private func viewToReal(_ coordinate: CGFloat, origin: CGFloat,
                         pointsPerUnit: CGFloat) -> CGFloat {
 
   return (coordinate - origin) / pointsPerUnit
 }
 
-private func realToView(coordinate: CGFloat, origin: CGFloat,
+private func realToView(_ coordinate: CGFloat, origin: CGFloat,
                         pointsPerUnit: CGFloat) -> CGFloat {
 
   return coordinate * pointsPerUnit + origin
 }
 
-private func drawPoint(path: UIBezierPath, point: CGPoint?,
+private func drawPoint(_ path: UIBezierPath, point: CGPoint?,
                        drawing: Bool) -> Bool {
 
   guard point != nil else { return false }
@@ -88,16 +88,16 @@ private func drawPoint(path: UIBezierPath, point: CGPoint?,
   return true
 }
 
-private func lineTo(path: UIBezierPath, point: CGPoint, drawing: Bool) {
-  if drawing { path.addLineToPoint(point) }
-  else { path.moveToPoint(point) }
+private func lineTo(_ path: UIBezierPath, point: CGPoint, drawing: Bool) {
+  if drawing { path.addLine(to: point) }
+  else { path.move(to: point) }
 }
 
-private func strokePathWithColor(color: UIColor, f: (UIBezierPath)->Void) {
-  CGContextSaveGState(UIGraphicsGetCurrentContext())
+private func strokePathWithColor(_ color: UIColor, f: (UIBezierPath)->Void) {
+  UIGraphicsGetCurrentContext()?.saveGState()
   let path = UIBezierPath()
   f(path)
   color.setStroke()
   path.stroke()
-  CGContextRestoreGState(UIGraphicsGetCurrentContext())
+  UIGraphicsGetCurrentContext()?.restoreGState()
 }

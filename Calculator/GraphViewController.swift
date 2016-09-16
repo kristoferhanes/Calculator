@@ -24,33 +24,33 @@ class GraphViewController: UIViewController {
     didSet { graphView.dataSource = dataSource }
   }
 
-  private let defaults = NSUserDefaults.standardUserDefaults()
+  fileprivate let defaults = UserDefaults.standard
 
   var pointsPerUnit: CGFloat {
     get {
-      let ppu = defaults.objectForKey(Constants.PointsPerUnitKey) as? CGFloat
+      let ppu = defaults.object(forKey: Constants.PointsPerUnitKey) as? CGFloat
       graphView.pointsPerUnit = ppu ?? Constants.DefaultPointsPerUnit
       return graphView.pointsPerUnit
     }
     set {
       graphView.pointsPerUnit = newValue
-      defaults.setObject(graphView.pointsPerUnit,
+      defaults.set(graphView.pointsPerUnit,
                          forKey: Constants.PointsPerUnitKey)
     }
   }
 
-  private var origin: CGPoint? {
+  fileprivate var origin: CGPoint? {
     get {
-      let x = defaults.objectForKey(Constants.OriginXKey) as? CGFloat
-      let y = defaults.objectForKey(Constants.OriginYKey) as? CGFloat
+      let x = defaults.object(forKey: Constants.OriginXKey) as? CGFloat
+      let y = defaults.object(forKey: Constants.OriginYKey) as? CGFloat
       graphView.origin = x.map { x in y.map { y in CGPoint(x: x, y: y) } }
         ?? graphView.origin
       return graphView.origin
     }
     set {
       graphView.origin = newValue
-      defaults.setObject(graphView.origin?.x, forKey: Constants.OriginXKey)
-      defaults.setObject(graphView.origin?.y, forKey: Constants.OriginYKey)
+      defaults.set(graphView.origin?.x, forKey: Constants.OriginXKey)
+      defaults.set(graphView.origin?.y, forKey: Constants.OriginYKey)
     }
   }
 
@@ -60,11 +60,11 @@ class GraphViewController: UIViewController {
     graphView.pointsPerUnit = pointsPerUnit
   }
 
-  @IBAction func pinch(sender: UIPinchGestureRecognizer) {
+  @IBAction func pinch(_ sender: UIPinchGestureRecognizer) {
     switch sender.state {
-    case .Changed:
+    case .changed:
       graphView.precision = Constants.GesturePrecision
-      let location = sender.locationInView(graphView)
+      let location = sender.location(in: graphView)
       let scale = sender.scale
       pointsPerUnit *= scale
       if let o = origin {
@@ -73,32 +73,32 @@ class GraphViewController: UIViewController {
         origin = CGPoint(x: x, y: y)
       }
       sender.scale = 1
-    case .Ended:
+    case .ended:
       graphView.precision = 1
       sender.scale = 1
     default: break
     }
   }
 
-  @IBAction func pan(sender: UIPanGestureRecognizer) {
+  @IBAction func pan(_ sender: UIPanGestureRecognizer) {
     switch sender.state {
-    case .Changed:
+    case .changed:
       graphView.precision = Constants.GesturePrecision
-      let translation = sender.translationInView(graphView)
+      let translation = sender.translation(in: graphView)
       origin?.x += translation.x
       origin?.y += translation.y
-      sender.setTranslation(CGPointZero, inView: graphView)
-    case .Ended:
+      sender.setTranslation(CGPoint.zero, in: graphView)
+    case .ended:
       graphView.precision = 1
-      sender.setTranslation(CGPointZero, inView: graphView)
+      sender.setTranslation(CGPoint.zero, in: graphView)
     default: break
     }
   }
 
-  @IBAction func tap(sender: UITapGestureRecognizer) {
+  @IBAction func tap(_ sender: UITapGestureRecognizer) {
     switch sender.state {
-    case .Ended:
-      origin = sender.locationInView(graphView)
+    case .ended:
+      origin = sender.location(in: graphView)
     default: break
     }
   }

@@ -10,23 +10,23 @@ import UIKit
 
 class CalculatorViewController: UIViewController {
 
-  private struct Constants {
+  fileprivate struct Constants {
     static let SetMemoryButtonTitle = "→M"
     static let MemoryVariableName = "M"
     static let CalculatorExpressionKey = "CalculatorViewController.calculator.expression"
     static let CalculatorVariablesKey = "CalculatorViewController.calculator.variables"
   }
 
-  private enum SegueIdentifier: String {
+  fileprivate enum SegueIdentifier: String {
     case ShowGraph = "ShowGraph"
   }
 
   @IBOutlet weak var displayLabel: RoundedLabel!
   @IBOutlet weak var expressionLabel: RoundedLabel!
 
-  private var oldVariableValues: [String:Double]?
+  fileprivate var oldVariableValues: [String:Double]?
 
-  private var calculator = Calculator() {
+  fileprivate var calculator = Calculator() {
     didSet {
       bindModelToView()
     }
@@ -41,20 +41,20 @@ class CalculatorViewController: UIViewController {
     calculator.variables["π"] = M_PI
   }
 
-  private let defaults = NSUserDefaults.standardUserDefaults()
+  fileprivate let defaults = UserDefaults.standard
 
-  private func loadExpressionFromDefaults() {
-    if let expression = defaults.objectForKey(Constants.CalculatorExpressionKey) as? String {
+  fileprivate func loadExpressionFromDefaults() {
+    if let expression = defaults.object(forKey: Constants.CalculatorExpressionKey) as? String {
       calculator.expression = expression
     }
-    if let variables = defaults.objectForKey(Constants.CalculatorVariablesKey) as? [String:Double] {
+    if let variables = defaults.object(forKey: Constants.CalculatorVariablesKey) as? [String:Double] {
       calculator.variables = variables
     }
   }
 
-  private func saveCalculatorToDefaults() {
-    defaults.setObject(calculator.expression, forKey: Constants.CalculatorExpressionKey)
-    defaults.setObject(calculator.variables, forKey: Constants.CalculatorVariablesKey)
+  fileprivate func saveCalculatorToDefaults() {
+    defaults.set(calculator.expression, forKey: Constants.CalculatorExpressionKey)
+    defaults.set(calculator.variables, forKey: Constants.CalculatorVariablesKey)
   }
 
   @IBAction func delete() {
@@ -64,7 +64,7 @@ class CalculatorViewController: UIViewController {
     saveCalculatorToDefaults()
   }
 
-  @IBAction func appendCharacter(sender: UIButton) {
+  @IBAction func appendCharacter(_ sender: UIButton) {
     guard let title = sender.currentTitle else { return }
     let expression = expressionLabel.text ?? ""
     expressionLabel.text = expression + title
@@ -83,7 +83,7 @@ class CalculatorViewController: UIViewController {
     clear()
   }
 
-  @IBAction func setVariable(sender: UIButton) {
+  @IBAction func setVariable(_ sender: UIButton) {
     if sender.currentTitle == Constants.SetMemoryButtonTitle {
       calculator.variables[Constants.MemoryVariableName] = displayValue
       saveCalculatorToDefaults()
@@ -94,40 +94,40 @@ class CalculatorViewController: UIViewController {
     displayValue = calculator.value
   }
 
-  override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     guard let id = segue.identifier.flatMap(SegueIdentifier.init)
       else { fatalError("Invalid segue indentifier \(segue.identifier).") }
-    guard let gvc = graphViewController(segue.destinationViewController)
-      where id == .ShowGraph
+    guard let gvc = graphViewController(segue.destination)
+      , id == .ShowGraph
       else { return }
     configGraphViewController(gvc)
   }
 
-  private func graphViewController(someObject: AnyObject) -> GraphViewController? {
+  fileprivate func graphViewController(_ someObject: AnyObject) -> GraphViewController? {
     let vc = someObject as? UIViewController
     let vvc = (vc as? UINavigationController)?.visibleViewController
     return vvc as? GraphViewController ?? vc as? GraphViewController
   }
 
-  private func configGraphViewController(gvc: GraphViewController) {
+  fileprivate func configGraphViewController(_ gvc: GraphViewController) {
     gvc.dataSource = self
     gvc.title = calculator.expression
   }
 
-  private func bindModelToView() {
+  fileprivate func bindModelToView() {
     expressionLabel.text = calculator.expression
     displayValue = calculator.value
   }
 
-  private var displayValue: Double? {
+  fileprivate var displayValue: Double? {
     get {
       return displayLabel.text.flatMap { Double($0) }
     }
     set {
-      func removeDecimalZero(str: String) -> String {
+      func removeDecimalZero(_ str: String) -> String {
         guard str.characters.count > 1 else { return str }
-        let end = str.startIndex.advancedBy(str.characters.count-2)
-        return str.substringFromIndex(end) == ".0" ? str[str.startIndex..<end] : str
+        let end = str.characters.index(str.startIndex, offsetBy: str.characters.count-2)
+        return str.substring(from: end) == ".0" ? str[str.startIndex..<end] : str
       }
 
       if let nv = newValue {
@@ -142,7 +142,7 @@ class CalculatorViewController: UIViewController {
 
 extension CalculatorViewController: GraphViewDataSource {
 
-  func yForX(x: CGFloat) -> CGFloat? {
+  func yForX(_ x: CGFloat) -> CGFloat? {
     calculator.variables[Constants.MemoryVariableName] = Double(x)
     return calculator.value.map { CGFloat($0) }
   }
