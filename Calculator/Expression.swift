@@ -24,7 +24,7 @@ indirect enum Expression {
 extension Expression {
   init?(parse input: String) {
     
-    typealias Stream = String.CharacterView
+    typealias Stream = Substring
     
     func parse(_ input: Stream) -> (Expression, Stream)? {
       guard let (first, rest) = decompose(input) else { return nil }
@@ -123,7 +123,7 @@ extension Expression {
     func parseUnitaryOperator(_ opStr: String, from input: Stream,
                               with expr: (Expression) -> Expression) -> (Expression, Stream)? {
       guard
-        let rest = drop(prefix: opStr.characters, from: input),
+        let rest = drop(prefix: Substring(opStr), from: input),
         let (e, restFinal) = parse(rest)
         else { return nil }
       return (expr(e), restFinal)
@@ -158,7 +158,7 @@ extension Expression {
       return str.first.map { ($0, str.dropFirst()) }
     }
     
-    guard let (expr, remaining) = parse(input.characters), remaining.isEmpty
+    guard let (expr, remaining) = parse(Substring(input)), remaining.isEmpty
       else { return nil }
     self = expr
   }

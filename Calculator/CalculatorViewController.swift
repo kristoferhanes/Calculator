@@ -38,7 +38,7 @@ class CalculatorViewController: UIViewController {
     guard let vc = (splitViewController?.viewControllers[1]).flatMap(graphViewController)
       else { return }
     configGraphViewController(vc)
-    calculator.variables["π"] = M_PI
+    calculator.variables["π"] = Double.pi
   }
 
   fileprivate let defaults = UserDefaults.standard
@@ -59,7 +59,7 @@ class CalculatorViewController: UIViewController {
 
   @IBAction func delete() {
     guard let expression = expressionLabel.text else { return }
-    expressionLabel.text = String(expression.characters.dropLast())
+    expressionLabel.text = String(expression.dropLast())
     calculator.expression = expressionLabel.text
     saveCalculatorToDefaults()
   }
@@ -96,7 +96,7 @@ class CalculatorViewController: UIViewController {
 
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     guard let id = segue.identifier.flatMap(SegueIdentifier.init)
-      else { fatalError("Invalid segue indentifier \(segue.identifier).") }
+        else { fatalError("Invalid segue indentifier \(segue.identifier ?? "nil").") }
     guard let gvc = graphViewController(segue.destination)
       , id == .ShowGraph
       else { return }
@@ -125,9 +125,7 @@ class CalculatorViewController: UIViewController {
     }
     set {
       func removeDecimalZero(_ str: String) -> String {
-        guard str.characters.count > 1 else { return str }
-        let end = str.characters.index(str.startIndex, offsetBy: str.characters.count-2)
-        return str.substring(from: end) == ".0" ? str[str.startIndex..<end] : str
+        return str.suffix(2) == ".0" ? String(str.dropLast(2)) : str
       }
 
       if let nv = newValue {

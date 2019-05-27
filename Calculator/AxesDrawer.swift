@@ -142,10 +142,10 @@ class AxesDrawer {
 
     func drawAnchoredToPoint(_ location: CGPoint, color: UIColor) {
       let attributes = [
-        NSFontAttributeName : UIFont.preferredFont(forTextStyle: UIFontTextStyle.footnote),
-        NSForegroundColorAttributeName : color
+        NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: UIFont.TextStyle.footnote),
+        NSAttributedString.Key.foregroundColor : color
       ]
-      var textRect = CGRect(center: location, size: text.size(attributes: attributes))
+        var textRect = CGRect(center: location, size: text.size(withAttributes: attributes))
       switch self {
       case .top: textRect.origin.y += textRect.size.height / 2 + AnchoredText.VerticalOffset
       case .left: textRect.origin.x += textRect.size.width / 2 + AnchoredText.HorizontalOffset
